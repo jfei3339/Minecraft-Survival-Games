@@ -1,0 +1,60 @@
+main: me.Jon.SurvivalGames.Main
+name: SG
+version: 1.0
+description: SG plugin
+commands:
+  vote:
+    usage: /<command>
+    description: vote for a map
+  v:
+    usage: /<command>
+    description: shortcut
+  pos:
+    usage: /<command>
+    description: designate map spawn position
+  spec:
+    usage: /<command>
+    description: spectate a player
+  spectate:
+    usage: /<command>
+    description: spectate a player
+  list:
+    usage: /<command>
+    description: list players/specs
+  l:
+    usage: /<command>
+    description: same as above
+  plugin:
+    usage: /<command>
+    description: blocked
+  pl:
+    usage: /<command>
+    description: blocked
+  version:
+    usage: /<command>
+    description: blocked
+  ver:
+    usage: /<command>
+    description: blocked
+  help:
+    usage: /<command>
+    description: blocked
+  ?:
+    usage: /<command>
+    description: blocked
+  stats:
+    usage: /<command>
+    description: check a players stats
+  forcenext:
+    usage: /<command>
+    description: force next stage of game
+  hub:
+    usage: /<command>
+    description: teleport players to hub
+  level:
+    usage: /<command>
+    description: get progress
+  progress:
+    usage: /<command>
+    description: get progress
+    

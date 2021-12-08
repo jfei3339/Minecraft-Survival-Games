@@ -1,0 +1,50 @@
+package me.Jon.SurvivalGames.SQL;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import java.sql.Connection;
+
+public class MySQL {
+	
+	/*
+	private String host = "localhost";
+	private String port = "3306";
+	private String database = "sgplayerdata";
+	private String username = "root";
+	private String password = ""; */
+	
+	private String host = "localhost";
+	private String port = "3306";
+	private String database = "playerdata";
+	private String username = "";
+	private String password = "";
+	
+	private Connection connection;
+	
+	public boolean isConnected() {
+		return (connection == null ? false : true);
+	}
+	
+	public void connect() throws ClassNotFoundException, SQLException {
+		if (!isConnected()) {
+			connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false", username, password);
+		}
+	}
+	
+	public void disconnect() {
+		if (isConnected()) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public Connection getConnection() {
+		return connection;
+	}
+
+}
