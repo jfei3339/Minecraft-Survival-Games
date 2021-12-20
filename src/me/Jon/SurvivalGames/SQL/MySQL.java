@@ -17,7 +17,7 @@ public class MySQL {
 	private String host = "localhost";
 	private String port = "3306";
 	private String database = "playerdata";
-	private String username = "";
+	private String username = "root";
 	private String password = "";
 	
 	private Connection connection;
