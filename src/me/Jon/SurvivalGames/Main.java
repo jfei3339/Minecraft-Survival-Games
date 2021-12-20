@@ -54,7 +54,7 @@ public class Main extends JavaPlugin implements Listener{
 	private PluginMessage bungee = new PluginMessage();
 	
 	//game variables
-	public static final String serverIP = ChatColor.AQUA + "" + ChatColor.BOLD + "servername.com";
+	public static final String serverIP = ChatColor.AQUA + "" + ChatColor.BOLD + "By Jonathan Fei";
 	public static final  String prefix = ChatColor.DARK_GRAY + StringFunctions.surround("Server", ChatColor.GOLD + "");
 	public static String serverName;
 	
@@ -128,11 +128,12 @@ public class Main extends JavaPlugin implements Listener{
 		//get rid of playerdata, remove weird bugs
 		File playerFilesDir = new File("lobby/playerdata");
 		if(playerFilesDir.isDirectory()){
-		String[] playerDats = playerFilesDir.list();
-		for (int i = 0; i < playerDats.length; i++) {
-		File datFile = new File(playerFilesDir, playerDats[i]); 
-		datFile.delete();
-		} }
+			String[] playerDats = playerFilesDir.list();
+			for (int i = 0; i < playerDats.length; i++) {
+				File datFile = new File(playerFilesDir, playerDats[i]); 
+				datFile.delete();
+			} 
+		}
 		
 		this.SQL = new MySQL();
 		data = new SQLGetter(this);

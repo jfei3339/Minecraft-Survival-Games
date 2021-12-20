@@ -150,10 +150,6 @@ public class InGameCommands implements Listener, CommandExecutor {
 							player.sendMessage(Main.prefix + ChatColor.RED + "Player not found.");
 						}
 
-
-						
-						
-						
 					}
 					
 				} else {
