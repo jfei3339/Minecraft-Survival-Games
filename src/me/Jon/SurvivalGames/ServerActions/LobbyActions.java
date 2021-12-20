@@ -6,8 +6,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+/*
+ * Class that represents what the server does to a player when they join the server.
+ */
 public class LobbyActions {
 	
+	/**
+	 * Clears the player of any items, armor, health, etc. they may have had from previously joining the server.
+	 * 
+	 * @param player: the player who joined
+	 */
 	public static void clearPlayer(final Player player) {
         player.getInventory().clear();
         player.getInventory().setHelmet(new ItemStack(Material.AIR));

@@ -11,6 +11,9 @@ import java.util.Arrays;
 
 import org.bukkit.Bukkit;
 
+/*
+ * Class that manages map reset logistics.
+ */
 public class ArenaReset {
 	
 	private static void copyFileStructure(File source, File target){

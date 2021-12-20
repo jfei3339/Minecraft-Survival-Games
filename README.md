@@ -9,7 +9,7 @@ by MCGamer.net's version of Survival Games, but the code is my own.
 When the server is first started, any players who join are teleported to the lobby. Here, players can vote for which maps they want to play. 
 Maps available by issuing the command "/vote". To vote for a map, players type "/vote #", where '#' is the number of the map.
 
-A minimum of 6 players is needed to start the game. There is a countdown clock so that everytime has a chance to vote for a map.
+A minimum of 6 players is needed to start the game. The maximum number of players allowed is 24 (as in the Hunger Games, where there are 24 tributes/participants). There is a countdown clock so that everytime has a chance to vote for a map.
 
 The players are then teleported to the map with most votes. The player spawn positions form a circle around a "cornucopia," just like the original Hunger Games. If there are multiple winning maps, the map first listed wins.
 

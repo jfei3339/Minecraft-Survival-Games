@@ -11,6 +11,9 @@ import me.Jon.SurvivalGames.Data.MapSpawns;
 import me.Jon.SurvivalGames.Data.MapTier2;
 import net.md_5.bungee.api.ChatColor;
 
+/*
+ * Class that manages logistics after a player wins.
+ */
 public class Celebration {
 	
 	/**

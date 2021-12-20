@@ -9,6 +9,9 @@ import org.bukkit.event.Listener;
 
 import me.Jon.SurvivalGames.Data.MapSpawns;
 
+/*
+ * Class that allows an admin to determine the spawn locations of players on a certain map.
+ */
 public class MapCommands implements Listener, CommandExecutor {
 	
 	public String cmd1 = "pos";
