@@ -16,6 +16,9 @@ import me.Jon.SurvivalGames.Main;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.SGScoreboards;
 
+/*
+ * Class managing the logistics of a player joining the server while the game is ongoing (spectators)
+ */
 public class SpecEvents implements Listener {
 	
 	//spectator join

@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 
 import me.Jon.SurvivalGames.Data.MapSpawns;
 
-public class mapCommands implements Listener, CommandExecutor {
+public class MapCommands implements Listener, CommandExecutor {
 	
 	public String cmd1 = "pos";
 

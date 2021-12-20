@@ -6,15 +6,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-
+import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.Data.MapSpawns;
 import me.Jon.SurvivalGames.Data.MapTier2;
 import net.md_5.bungee.api.ChatColor;
 
 public class Celebration {
 	
+	/**
+	 * Once a winner has been determined, update stats, display celebratory messages, and execute celebratory events such as fireworks.
+	 */
 	public static void celebrate() {
-		
 		
 		for (Player p: PlayersSpecs.players) {
 			p.getWorld().setTime(14000);
@@ -22,17 +24,12 @@ public class Celebration {
 			
 			if (Main.connected == true) {
 				Main.data.setStat(p.getUniqueId(), "WINS", Main.data.getStat(p.getUniqueId(), "WINS") + 1);
-
-				
 				p.sendMessage(ChatColor.LIGHT_PURPLE + "+200 XP (win)");
 				Main.data.setStat(p.getUniqueId(), "XP", Main.data.getStat(p.getUniqueId(), "XP") + 200);
-				
-				
-				
-				
+
 			}
 			
-			Main.gameState = "CLEANUP";
+			Main.gameState = GameState.CLEANUP;
 		}
 		
 		//fireworks
@@ -52,14 +49,16 @@ public class Celebration {
 			
 		}
 	}
-	
-	public static int getLevel(Player p) {
-		UUID uuid = p.getUniqueId();
-		
+	/**
+	 * Get the level of the player on the server.
+	 * 
+	 * @param player: the player whose level to get
+	 * @return the level of the player
+	 */
+	public static int getLevel(Player player) {
+		UUID uuid = player.getUniqueId();
 		int xp = Main.data.getStat(uuid, "XP");
-		
 		int level = 1;
-		
 		if (xp < 200) {
 			level = 1;
 		} else if (xp < 700) {
@@ -91,7 +90,6 @@ public class Celebration {
 				xp -= 100000;
 			}
 		}
-		
 		return level;
 		
 		

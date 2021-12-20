@@ -32,23 +32,23 @@ import me.Jon.SurvivalGames.Commands.AdminCommands;
 import me.Jon.SurvivalGames.Commands.InGameCommands;
 import me.Jon.SurvivalGames.Commands.VoteCommand;
 import me.Jon.SurvivalGames.Commands.OverrideCommands;
-import me.Jon.SurvivalGames.Commands.mapCommands;
+import me.Jon.SurvivalGames.Commands.MapCommands;
 import me.Jon.SurvivalGames.Data.MapSpawns;
 import me.Jon.SurvivalGames.Data.MapTier2;
 import me.Jon.SurvivalGames.Data.ServerInfo;
 import net.md_5.bungee.api.ChatColor;
 
 /*
- * Main class that controls the plugin.
+ * Main class that controls the game.
  */
 public class Main extends JavaPlugin implements Listener{
 	
 	//register commands implemented for server
-	private final VoteCommand coms = new VoteCommand();
-	private final mapCommands coms2 = new mapCommands();
-	private final InGameCommands ingameComs = new InGameCommands();
-	private final OverrideCommands coms4 = new OverrideCommands();
-	private final AdminCommands coms5 = new AdminCommands();
+	private final VoteCommand voteCommands = new VoteCommand();
+	private final MapCommands mapCommands = new MapCommands();
+	private final InGameCommands inGameCommands = new InGameCommands();
+	private final OverrideCommands overrideCommands = new OverrideCommands();
+	private final AdminCommands adminCommands = new AdminCommands();
 	
 	//this communicates to other servers
 	private PluginMessage bungee = new PluginMessage();
@@ -58,7 +58,7 @@ public class Main extends JavaPlugin implements Listener{
 	public static final  String prefix = ChatColor.DARK_GRAY + StringFunctions.surround("Server", ChatColor.GOLD + "");
 	public static String serverName;
 	
-	private final static int minPlayers = 6;
+	public final static int minPlayers = 6;
 	
 	public static final int lobbyMinTime = 60;
 	public static int lobbyTimeLeft = lobbyMinTime;
@@ -81,7 +81,8 @@ public class Main extends JavaPlugin implements Listener{
 	final public static int refill1Time = 600;
 	final public static int refill2Time = 120;
 	
-	enum GameState {
+	//enum representing the current state of the game.
+	public static enum GameState {
 		LOBBY, 
 		PREGAME,
 		INGAME,
@@ -89,7 +90,6 @@ public class Main extends JavaPlugin implements Listener{
 		DEATHMATCH,
 		CLEANUP,
 		RESTARTING
-		
 	}
 	
 	public static GameState gameState = GameState.LOBBY;
@@ -109,25 +109,21 @@ public class Main extends JavaPlugin implements Listener{
 
 	private static Main instance;
 	
+	/**
+	 * Returns an instance of this class
+	 */
 	public static Main getInstance() {
 		return instance;
 	}
 	
-	private static void setInstance(Main instance) {
-		Main.instance = instance;
-	}
-
-	
+	/**
+	 * Registers commands, connects to SQL server, registers events, and starts the game when the server is launched.
+	 */
 	public void onEnable() {
 		
 		//get map locations
 		loadData();
-		
-		//Bungee stuff
-		setInstance(this);
-		
-		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PluginMessage());
+
 		
 		//get rid of playerdata, remove weird bugs
 		File playerFilesDir = new File("lobby/playerdata");
@@ -176,36 +172,37 @@ public class Main extends JavaPlugin implements Listener{
 		getServer().getPluginManager().registerEvents(new Tier2Event(), this);
 		
 		//register commands
-		this.getCommand(coms.cmd1).setExecutor(coms);
-		this.getCommand(coms.cmd2).setExecutor(coms);
+		this.getCommand(voteCommands.cmd1).setExecutor(voteCommands);
+		this.getCommand(voteCommands.cmd2).setExecutor(voteCommands);
 		
-		this.getCommand(coms2.cmd1).setExecutor(coms2);
+		this.getCommand(mapCommands.cmd1).setExecutor(mapCommands);
 		
-		this.getCommand(ingameComs.cmd1).setExecutor(ingameComs);
-		this.getCommand(ingameComs.cmd2).setExecutor(ingameComs);
-		this.getCommand(ingameComs.cmd4).setExecutor(ingameComs);
-		this.getCommand(ingameComs.cmd5).setExecutor(ingameComs);
-		this.getCommand(ingameComs.cmd6).setExecutor(ingameComs);
-		this.getCommand(ingameComs.cmd7).setExecutor(ingameComs);
-		this.getCommand(ingameComs.cmd8).setExecutor(ingameComs);
-		this.getCommand(ingameComs.cmd9).setExecutor(ingameComs);
+		this.getCommand(inGameCommands.cmd1).setExecutor(inGameCommands);
+		this.getCommand(inGameCommands.cmd2).setExecutor(inGameCommands);
+		this.getCommand(inGameCommands.cmd4).setExecutor(inGameCommands);
+		this.getCommand(inGameCommands.cmd5).setExecutor(inGameCommands);
+		this.getCommand(inGameCommands.cmd6).setExecutor(inGameCommands);
+		this.getCommand(inGameCommands.cmd7).setExecutor(inGameCommands);
+		this.getCommand(inGameCommands.cmd8).setExecutor(inGameCommands);
+		this.getCommand(inGameCommands.cmd9).setExecutor(inGameCommands);
 		
-		this.getCommand(coms4.cmd1).setExecutor(coms4);
-		this.getCommand(coms4.cmd2).setExecutor(coms4);
-		this.getCommand(coms4.cmd3).setExecutor(coms4);
-		this.getCommand(coms4.cmd4).setExecutor(coms4);
-		this.getCommand(coms4.cmd5).setExecutor(coms4);
-		this.getCommand(coms4.cmd6).setExecutor(coms4);
+		this.getCommand(overrideCommands.cmd1).setExecutor(overrideCommands);
+		this.getCommand(overrideCommands.cmd2).setExecutor(overrideCommands);
+		this.getCommand(overrideCommands.cmd3).setExecutor(overrideCommands);
+		this.getCommand(overrideCommands.cmd4).setExecutor(overrideCommands);
+		this.getCommand(overrideCommands.cmd5).setExecutor(overrideCommands);
+		this.getCommand(overrideCommands.cmd6).setExecutor(overrideCommands);
 		
-		this.getCommand(coms5.cmd1).setExecutor(coms5);
+		this.getCommand(adminCommands.cmd1).setExecutor(adminCommands);
 		
 		startSG();
-		updateStatus();
 		
 ;	}
 	
 
-	
+	/**
+	 * Loads in the map data, such as chest locations and spawns
+	 */
 	public void loadData() {
 		mp = new MapSpawns();
 		mp.setupMapSpawns();
@@ -216,10 +213,12 @@ public class Main extends JavaPlugin implements Listener{
 		si = new ServerInfo();
 		si.setupConfig();
 		
-		serverName = si.ServerConfig.getString("serverName");
+		serverName = ServerInfo.ServerConfig.getString("serverName");
 	}
 	
-	//fired when plugin is disabled
+	/**
+	 * Resets certain player data.
+	 */
 	public void onDisable() {
 		gameState = GameState.RESTARTING;
 		statusdata.setStat(serverName, "STATUS", "RESTARTING");
@@ -243,10 +242,6 @@ public class Main extends JavaPlugin implements Listener{
 		getServer().getConsoleSender().sendMessage(ChatColor.RED + "\n SG has been Disabled \n");
 	}
 	
-	
-	
-	
-	
 	public static int taskID;
 	public static boolean flag = true;
 	public static boolean DMcountdown = false;
@@ -256,15 +251,16 @@ public class Main extends JavaPlugin implements Listener{
 	private double yCenter;
 	private double zCenter;
 	
+	/**
+	 * Method that controls the game with a runnable.
+	 */
 	public void startSG() {
-		
 	        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 	        taskID = scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
 	            @Override
 	            public void run() {
 	            	
 	            	//dummy to make sure no database timeout
-	            	
 	            	if (count == 0) {
 	            		if (Main.connected == true) {
 	            			data.dummy();
@@ -311,30 +307,26 @@ public class Main extends JavaPlugin implements Listener{
 								
 								
 								//Declare map winner, teleport players to map.
-								winningMap = Transition.determineWinner();
+								winningMap = Transition.determineWinningMap();
 								ChestOpenEvent.getTier2Locations(winningMap); //winningMap.toLowerCase();
 								
 								Bukkit.broadcastMessage(prefix + ChatColor.YELLOW + winningMap + ChatColor.GREEN +  " will be played!");
 								flag = false;
 								Transition.teleportPlayers(winningMap);
 								Bukkit.getWorld(winningMap).setTime(0);
-								
-								
+
 								//distance for lightning strikes in DM
 								DMDistance = 1.3*Transition.DMLightningDist(winningMap);
 								
 								gameState = GameState.PREGAME;
-								
 								
 								//new scoreboard
 								for (Player p: Bukkit.getServer().getOnlinePlayers()) {
 									p.getScoreboard().getObjective("Lobby").getScore(ChatColor.WHITE + "Watching: ").setScore(2);
 									SGScoreboards.updatePreScoreboard(p);
 								}
-								
 				
 							}
-							
 							if (lobbyTimeLeft <= 9 && lobbyTimeLeft >= 0) {
 								Bukkit.broadcastMessage(prefix + ChatColor.RED + (lobbyTimeLeft+1) + ChatColor.GREEN + " seconds left until voting ends!");
 							}
@@ -357,8 +349,6 @@ public class Main extends JavaPlugin implements Listener{
 						
 						
 						if (preTimeLeft == -1) {
-							
-							
 							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Let the Games Begin!");
 							gameState = GameState.INGAME;
 							for (Player p: Bukkit.getOnlinePlayers()) {
@@ -372,13 +362,9 @@ public class Main extends JavaPlugin implements Listener{
 						} else if (PlayersSpecs.players.size() == 0) {
 							gameState = GameState.CLEANUP;
 						}
-						
-						
-						
 					}
 					
 					//INGAME	
-					
 					if (gameState.equals(GameState.INGAME)) {
 						
 						inGameTimeLeft -= 1;
@@ -417,8 +403,6 @@ public class Main extends JavaPlugin implements Listener{
 							xCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".x"); //toLowerCase()
 							yCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".y");
 							zCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".z");
-							
-
 						
 							for (Player p: Bukkit.getOnlinePlayers()) {
 								SGScoreboards.updatePreDMScoreboard(p);
@@ -444,7 +428,6 @@ public class Main extends JavaPlugin implements Listener{
 						}
 						
 						//did someone win?
-						
 						if (PlayersSpecs.players.size() == 1) {
 							Celebration.celebrate();
 						} else if (PlayersSpecs.players.size() == 0) {
@@ -548,19 +531,10 @@ public class Main extends JavaPlugin implements Listener{
 	        }, 0L, 20L);
 	    }
 	
-	public void updateStatus() {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				statusdata.setStat(serverName, "STATUS", "");
-				statusdata.setStat(serverName, "PLAYERS", PlayersSpecs.players.size());
-			}	
-		}.runTaskTimerAsynchronously(this, 20L, 60L);
-	}
 	
 	
 
-    //Unloading maps, to rollback maps. Will delete all player builds until last server save
+    //Unload maps, to rollback maps. Will delete all player builds until last server save
     public static void unloadMap(String mapname){
         if(Bukkit.getServer().unloadWorld(Bukkit.getServer().getWorld(mapname), false)){
             Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "SUCCESSFULLY UNLOADED " + mapname);
@@ -569,12 +543,12 @@ public class Main extends JavaPlugin implements Listener{
         }
     }
     
-    //Loading maps (MUST BE CALLED AFTER UNLOAD MAPS TO FINISH THE ROLLBACK PROCESS)
+    //Load maps (MUST BE CALLED AFTER UNLOAD MAPS TO FINISH THE ROLLBACK PROCESS)
     public static void loadMap(String mapname){
         Bukkit.getServer().createWorld(new WorldCreator(mapname));
     }
  
-    //Maprollback method, because were too lazy to type 2 lines
+    //Map rollback method
     public static void rollback(String mapname){
         unloadMap(mapname);
         loadMap(mapname);

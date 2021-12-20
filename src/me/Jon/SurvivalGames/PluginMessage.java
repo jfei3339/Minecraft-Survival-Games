@@ -8,7 +8,9 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import me.Jon.SurvivalGames.Main;
 
-
+/*
+ * Class for Bungeecord. Currently not using.
+ */
 public class PluginMessage implements PluginMessageListener{
 	
 	@Override

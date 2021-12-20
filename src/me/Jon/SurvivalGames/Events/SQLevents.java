@@ -1,21 +1,19 @@
 package me.Jon.SurvivalGames.Events;
 
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import me.Jon.SurvivalGames.Main;
+import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import net.md_5.bungee.api.ChatColor;
 
+/*
+ * Class managing events that change player stats and need to update to the database.
+ */
 public class SQLevents implements Listener{
-	
-
-	
 	
 	@EventHandler
 	public void onKill(PlayerDeathEvent e) {
@@ -55,7 +53,7 @@ public class SQLevents implements Listener{
 	
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
-		if (Main.gameState.equals("INGAME") || Main.gameState.equals("PREDM") || Main.gameState.equals("DEATHMATCH")) {
+		if (Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH)) {
 			Player player = e.getEntity();
 			UUID uuid = player.getUniqueId();
 			Main.data.setStat(uuid, "LOSSES", Main.data.getStat(uuid, "LOSSES") + 1);

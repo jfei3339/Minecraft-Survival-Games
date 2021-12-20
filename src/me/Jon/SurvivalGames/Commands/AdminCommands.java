@@ -1,7 +1,5 @@
 package me.Jon.SurvivalGames.Commands;
 
-import java.io.Console;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import me.Jon.SurvivalGames.Main;
+import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.SGScoreboards;
 import me.Jon.SurvivalGames.Transition;
 import me.Jon.SurvivalGames.Events.ChestOpenEvent;
@@ -29,8 +28,8 @@ public class AdminCommands implements Listener, CommandExecutor {
 				
 				String rank = Main.data.getRank(((Player) sender).getUniqueId());
 				if (rank.equals("ADMIN") || rank.equals("OWNER")) {
-					if (Main.gameState.equals("LOBBY")) {
-						Main.winningMap = Transition.determineWinner();
+					if (Main.gameState.equals(GameState.LOBBY)) {
+						Main.winningMap = Transition.determineWinningMap();
 						ChestOpenEvent.getTier2Locations(Main.winningMap.toLowerCase());
 						
 						Bukkit.broadcastMessage(Main.prefix + ChatColor.YELLOW + Main.winningMap + ChatColor.GREEN +  " will be played!");
@@ -42,7 +41,7 @@ public class AdminCommands implements Listener, CommandExecutor {
 						//distance for lightning strikes in DM
 						Main.DMDistance = 1.25*Transition.DMLightningDist(Main.winningMap);
 						
-						Main.gameState = "PREGAME";
+						Main.gameState = GameState.CLEANUP;
 						
 						
 						//new scoreboard

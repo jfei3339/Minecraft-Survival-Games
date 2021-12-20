@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.bukkit.entity.Player;
-
+/*
+ * Class that keeps track of online players and holds in-game data for players.
+ */
 public class PlayersSpecs {
 	
 	public static HashSet<Player> players = new HashSet<Player>();

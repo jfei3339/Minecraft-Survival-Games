@@ -9,8 +9,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import me.Jon.SurvivalGames.Data.MapTier2;
 
+/*
+ * Class managing the event that allows an admin to set a chest to being tier 2 on a certain map.
+ */
 public class Tier2Event implements Listener{
 	
+	/**
+	 * Sets a chest to tier 2 if broken in creative mode by an admin.
+	 * 
+	 * @param event: a block break event which may possibly be breaking a chest
+	 */
 	@EventHandler
 	public void makeTier2(BlockBreakEvent event) {
 		
@@ -31,9 +39,6 @@ public class Tier2Event implements Listener{
 			MapTier2.mapTier2Config.set("Maps. " + map + "." + chestNum + ".z", b.getZ());
 			MapTier2.saveData();
 			chestNum++;
-			
-			
-			
 			event.getPlayer().sendMessage( String.valueOf(b.getX()) + " " + String.valueOf(b.getY()) + " " + String.valueOf(b.getZ()) + " has been set to a tier 2 chest.");
 			
 			event.setCancelled(true);

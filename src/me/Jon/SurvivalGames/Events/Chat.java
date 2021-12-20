@@ -11,8 +11,16 @@ import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.StringFunctions;
 import net.md_5.bungee.api.ChatColor;
 
+/*
+ * Class that determines chat messages
+ */
 public class Chat implements Listener{
 	
+	/**
+	 * Sends a message in chat from a player.
+	 * 
+	 * @param event: the event when a player enters something in chat.
+	 */
 	@EventHandler
 	public void chatMsg(AsyncPlayerChatEvent event) {
 		Player pl = event.getPlayer();
@@ -27,7 +35,7 @@ public class Chat implements Listener{
 		
 		
 		if (PlayersSpecs.players.contains(pl)) {
-			int lvl = Main.data.getStat(pl.getUniqueId(), "LEVEL");
+			int lvl = 1; //Main.data.getStat(pl.getUniqueId(), "LEVEL");
 			String level = StringFunctions.surround(lvl + "★", ChatColor.YELLOW + "");
 			String msg = ChatColor.WHITE + event.getMessage();
 			

@@ -10,10 +10,19 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 import me.Jon.SurvivalGames.Data.ServerInfo;
+import me.Jon.SurvivalGames.Main.GameState;
 import net.md_5.bungee.api.ChatColor;
 
+/*
+ * Class that manages scoreboards of players.
+ */
 public class SGScoreboards {
 
+	/**
+	 * Creates a scoreboard for a player.
+	 * 
+	 * @param player the player to create a scoreboard for
+	 */
 	public static void createScoreboard(Player player) {
 		
 		ScoreboardManager m = Bukkit.getScoreboardManager();
@@ -22,7 +31,7 @@ public class SGScoreboards {
 		Objective o = b.registerNewObjective("Lobby", "dummy");
 		o.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
-		if (Main.gameState.equals("LOBBY")) {
+		if (Main.gameState.equals(GameState.LOBBY)) {
 			if (Main.lobbyTimeLeft == 60) {
 				o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 1:00");
 			} else if (Main.lobbyTimeLeft > 9) {
@@ -32,7 +41,7 @@ public class SGScoreboards {
 			} else {
 				o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:00");
 			}
-		} else if (Main.gameState.equals("PREGAME")) {
+		} else if (Main.gameState.equals(GameState.PREGAME)) {
 			if (Main.preTimeLeft > 9) {
 				b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "PreGame" + ChatColor.RED + " 0:" + Main.preTimeLeft);
 			} else if (Main.preTimeLeft >= 0){
@@ -54,7 +63,7 @@ public class SGScoreboards {
 		watching.setPrefix("");
 		watching.setSuffix("" + ChatColor.GREEN + PlayersSpecs.spectators.size());
 		
-		if (Main.gameState.equals("PREGAME") || Main.gameState.equals("INGAME") || Main.gameState.equals("PREDM") || Main.gameState.equals("DEATHMATCH") || Main.gameState.equals("CLEANUP") ) {
+		if (Main.gameState.equals(GameState.PREGAME) || Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH) || Main.gameState.equals(GameState.CLEANUP) ) {
 			o.getScore(ChatColor.WHITE + "Watching: ").setScore(2);
 		}
 		//watching.setScore(2);
@@ -98,12 +107,15 @@ public class SGScoreboards {
 		
 	}	
 	
+	/**
+	 * Update a scoreboard for a player when in the lobby.
+	 * 
+	 * @param player: the player whose scoreboard to update
+	 */
 	public static void updateLobbyScoreboard(Player player) {
 		
 		Scoreboard b = player.getScoreboard();
 		b.getTeam("playing").setSuffix("" + ChatColor.GREEN + PlayersSpecs.players.size());
-
-		
 		if (Main.lobbyTimeLeft == 60) {
 			b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 1:00");
 		} else if (Main.lobbyTimeLeft > 9) {
@@ -114,31 +126,60 @@ public class SGScoreboards {
 			b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:00");
 		} 
 		
-			
-		
 	}
 	
+	/**
+	 * Update a scoreboard for a player in PreGame.
+	 * 
+	 * @param player: the player whose scoreboard to update
+	 */
 	public static void updatePreScoreboard(Player player) {
 		updateScoreboard(player, Main.preTimeLeft, "PreGame ");
 	}
 	
+	/**
+	 * Update a scoreboard for a player during INGAME.
+	 * 
+	 * @param player: the player whose scoreboard to update
+	 */
 	public static void updateInGameScoreboard(Player player) {
 		updateScoreboard(player, Main.inGameTimeLeft, "LiveGame ");
 	}
 	
+	/**
+	 * Update a scoreboard for a player in PREDM.
+	 * 
+	 * @param player: the player whose scoreboard to update
+	 */
 	public static void updatePreDMScoreboard(Player player) {
 		updateScoreboard(player, Main.preDMTimeLeft, "Pre-DM ");
 	}
 	
+	/**
+	 * Update a scoreboard for a player in DEATHMATCH
+	 * 
+	 * @param player: the player whose scoreboard to update
+	 */
 	public static void updateDMScoreboard(Player player) {
 		updateScoreboard(player, Main.DMTimeLeft, "Deathmatch ");
 	}
 	
+	/**
+	 * Update a scoreboard for a player in CLEANUP.
+	 * 
+	 * @param player: the player whose scoreboard to update
+	 */
 	public static void updateCleanupScoreboard(Player player) {
 		updateScoreboard(player, Main.cleanupTimeLeft, "GameEnd ");
 	}
 	
-	//template
+	/**
+	 * Update a scoreboard for a player.
+	 * 
+	 * @param player: the player to update.
+	 * @param timeLeft: how much time is left in the Game State.
+	 * @param gameState: the current Game State.
+	 */
 	public static void updateScoreboard(Player player, int timeLeft, String gameState) {
 		Scoreboard b = player.getScoreboard();
 		b.getTeam("playing").setSuffix("" + ChatColor.GREEN + PlayersSpecs.players.size());

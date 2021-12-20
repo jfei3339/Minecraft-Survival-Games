@@ -19,9 +19,13 @@ import me.Jon.SurvivalGames.Main;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.Data.MapTier2;
 import me.Jon.SurvivalGames.Items.ChestTierManager;
+import me.Jon.SurvivalGames.Main.GameState;
 import net.md_5.bungee.api.ChatColor;
 
 
+/*
+ * Class that manages what happens when a player opens a chest.
+ */
 public class ChestOpenEvent implements Listener {
 	
 	public static HashSet<String> openedChests = new HashSet<String>();
@@ -30,6 +34,11 @@ public class ChestOpenEvent implements Listener {
 	public static boolean refill2 = false;
 	
 	
+	/**
+	 * Gets the location of the tier 2 chests (chests with better items) on a certain map.
+	 * 
+	 * @param map: the name of the map.
+	 */
 	public static void getTier2Locations(String map) {
 		
 		int chestNum = 1;
@@ -44,10 +53,15 @@ public class ChestOpenEvent implements Listener {
 		
 	}
 	
+	/**
+	 * Handles the event of a player opening a chest.
+	 * 
+	 * @param e: an event where a player interacts with something, possibly opening a chest.
+	 */
 	@EventHandler
 	public void onChestOpen(PlayerInteractEvent e) {
 		
-		if (!Main.gameState.contentEquals("LOBBY")){
+		if (!Main.gameState.equals(GameState.LOBBY)){
 			
 			if (e.hasBlock()) {
 				Block b = e.getClickedBlock();

@@ -28,6 +28,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import me.Jon.SurvivalGames.Main;
+import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.SGScoreboards;
 import me.Jon.SurvivalGames.StringFunctions;
@@ -40,7 +41,7 @@ public class InGameEvents implements Listener {
 	public void onQuit(PlayerQuitEvent event) {
 		event.setQuitMessage(null);
 		
-		if (Main.gameState.equals("INGAME") || Main.gameState.equals("PREDM") || Main.gameState.equals("DEATHMATCH")) {
+		if (Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH)) {
 			Player player = event.getPlayer();
 			if (PlayersSpecs.players.contains(player)) {
 				
@@ -75,7 +76,7 @@ public class InGameEvents implements Listener {
 			}
 		}
 		
-		if (Main.gameState.equals("CLEANUP")) {
+		if (Main.gameState.equals(GameState.CLEANUP)) {
 			Player player = event.getPlayer();
 			if (PlayersSpecs.players.contains(player)) {
 				PlayersSpecs.players.remove(player);
@@ -94,14 +95,13 @@ public class InGameEvents implements Listener {
 			event.setCancelled(true);
 		}
 		
-		if ((Main.gameState.equals("INGAME") || Main.gameState.equals("PREDM") || Main.gameState.equals("DEATHMATCH") || Main.gameState.equals("CLEANUP")) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL) ){
+		if ((Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH) || Main.gameState.equals(GameState.CLEANUP)) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL) ){
 		
 			
 			Material type = event.getBlock().getType();
-
 			
+			//break items except for leaves, vine, fire, etc.
 			if (type == Material.LEAVES) {
-
 			} else if (type == Material.VINE) {
 				
 			} else if (type == Material.FIRE) {
@@ -128,7 +128,7 @@ public class InGameEvents implements Listener {
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
 		
-		if ((Main.gameState.equals("INGAME") || Main.gameState.equals("PREDM") || Main.gameState.equals("DEATHMATCH") || Main.gameState.equals("CLEANUP")) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
+		if ((Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH) || Main.gameState.equals(GameState.CLEANUP)) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
 			if (event.getBlock().getType() == Material.FIRE) {
 				
 			} else {
@@ -139,7 +139,6 @@ public class InGameEvents implements Listener {
 	}
 	
 	//flint and steel drains by 16
-
 	@EventHandler
 	public void onFNS(PlayerItemDamageEvent e) {
 		if (e.getItem().getType().equals(Material.FLINT_AND_STEEL)) {
@@ -196,7 +195,7 @@ public class InGameEvents implements Listener {
 		}
 
 		
-		if (Main.gameState.equals("INGAME") || Main.gameState.equals("PREDM") || Main.gameState.equals("DEATHMATCH")) {
+		if (Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH)) {
 			Bukkit.broadcastMessage(PlayersSpecs.nameColors.get(player) + player.getDisplayName() + ChatColor.GOLD + " has died.");
 			
 			//GET KILLER AND DO STUFF

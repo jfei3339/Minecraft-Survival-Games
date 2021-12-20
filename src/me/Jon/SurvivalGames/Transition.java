@@ -9,26 +9,34 @@ import me.Jon.SurvivalGames.Data.MapSpawns;
 import me.Jon.SurvivalGames.Events.ChestOpenEvent;
 import me.Jon.SurvivalGames.ServerActions.LobbyActions;
 
+/*
+ * A class that has methods that deal with logistics between game state transitions.
+ */
 public class Transition {
 	
-	public static String determineWinner() {
+	/*
+	 * Determines the winning map that will be played.
+	 */
+	public static String determineWinningMap() {
 		
 		String winner = VoteCommand.map1;
 		int votes = VoteCommand.votes.get(1);
-		
 		for (int i = 1; i<=5; i++) {
 			if (VoteCommand.votes.get(i) > votes) {
 				winner = VoteCommand.mapNames.get(i);
 				votes = VoteCommand.votes.get(i);
 			}
 		}
-		
 		ChestOpenEvent.getTier2Locations(winner);
-		
 		return winner;
 		
 	}
 	
+/**
+ * Teleports players to the respective locations on the winning map.
+ * 
+ * @param map
+ */
 	public static void teleportPlayers(String map) {
 		
 		int pos = 1;
@@ -38,10 +46,7 @@ public class Transition {
 			LobbyActions.clearPlayer(p);
 			
 			String posNum = String.valueOf(pos);
-			
 			String map1 = map; //map.toLowerCase();
-			
-			
 			double x = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + map1 + ".pos" + posNum + ".x");
 			double y = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + map1 + ".pos" + posNum + ".y");
 			double z = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + map1 + ".pos" + posNum + ".z");
@@ -58,6 +63,11 @@ public class Transition {
 		
 	}
 	
+	/**
+	 * Teleports players to the respective locations on the winning map during deathmatch.
+	 * 
+	 * @param map
+	 */
 	public static void teleportDM(String map) {
 		
 		int pos = 1;
@@ -93,6 +103,12 @@ public class Transition {
 		
 	}
 	
+	/**
+	 * Determines how far away players must be from spawn in order for lightning to strike them, during deathmatch.
+	 * 
+	 * @param map: the map whose lightning distance we are trying to calculate
+	 * @return the length in blocks from spawn players must be for lightning to strike them
+	 */
 	public static double DMLightningDist(String map) {
 		String map1 = map; //map.toLowerCase();
 		
