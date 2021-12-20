@@ -1,6 +1,6 @@
 # Minecraft-Survival-Games
 
-This is a Minecraft server I designed to host my own version of the gamemode "Minecraft Survival Games", which has been a very popular gamemode on Minecraft for nearly a decade. The gamemode is based off the Hunger Games trilogy by Suzanne Collins.
+This is a Minecraft server I designed to host my own version of the gamemode "Minecraft Survival Games", which has been a very popular gamemode on Minecraft for nearly a decade. The gamemode is based off the Hunger Games trilogy by Suzanne Collins. The server is written in Java.
 I hosted this server for a few months for a few hundred community members from the old MCGamer.net community, which I spent several years of my childhood playing. The color scheme and gameplay is heavily inspired
 by MCGamer.net's version of Survival Games, but the code is my own.
 
