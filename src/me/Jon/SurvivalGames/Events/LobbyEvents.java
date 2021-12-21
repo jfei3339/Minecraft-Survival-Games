@@ -51,7 +51,7 @@ public class LobbyEvents implements Listener{
 		
 		//join message, holds regardless of everything else (spec join event)
 		
-		if (Main.connected == true && Main.gameState != GameState.CLEANUP) {
+		if (Main.connectedToPlayerDB == true && Main.gameState != GameState.CLEANUP) {
 			
 			Main.data.dataCreatePlayer(p);
 			Main.data.infoCreatePlayer(p);
@@ -95,21 +95,15 @@ public class LobbyEvents implements Listener{
 		}
 
 		if (Main.gameState.equals(GameState.LOBBY)) {
-			
-			
 			LobbyActions.clearPlayer(p);
 			
 			p.teleport(new Location(Bukkit.getWorld("lobby"), 43.0, 66.0, -30.0, -90, 0));
-			
 			PlayersSpecs.players.add(p);
 			SGScoreboards.createScoreboard(p);		
 			p.sendMessage(Main.prefix + ChatColor.GREEN + "A minimum of "  + ChatColor.RED + Main.minPlayers + ChatColor.GREEN + " players is required to start the game.");
 			p.sendMessage(Main.prefix + ChatColor.GREEN + "Use /v to view the maps and /v # to vote for a map!");
-			
-			
-			//p.performCommand("v");
+
 		}
-		
 			
 	}
 	

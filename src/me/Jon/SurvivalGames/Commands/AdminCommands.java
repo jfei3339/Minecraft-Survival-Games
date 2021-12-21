@@ -24,7 +24,7 @@ public class AdminCommands implements Listener, CommandExecutor {
 		
 		if (cmd.getName().equalsIgnoreCase(cmd1)) {
 			
-			if (sender instanceof Player && Main.connected == true) {
+			if (sender instanceof Player && Main.connectedToPlayerDB == true) {
 				
 				String rank = Main.data.getRank(((Player) sender).getUniqueId());
 				if (rank.equals("ADMIN") || rank.equals("OWNER")) {

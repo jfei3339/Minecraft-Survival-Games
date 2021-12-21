@@ -95,7 +95,7 @@ public class InGameCommands implements Listener, CommandExecutor {
 			//stats command
 			if (cmd.getName().equalsIgnoreCase(cmd6)) {
 				
-				if (Main.connected == true) {
+				if (Main.connectedToPlayerDB == true) {
 					
 					if (args.length == 0) {
 						//get sender's stats

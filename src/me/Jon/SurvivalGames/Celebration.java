@@ -25,7 +25,7 @@ public class Celebration {
 			p.getWorld().setTime(14000);
 			Bukkit.broadcastMessage(Main.prefix + PlayersSpecs.nameColors.get(p) + p.getDisplayName() + ChatColor.GREEN + " has won the Survival Games!");
 			
-			if (Main.connected == true) {
+			if (Main.connectedToPlayerDB == true) {
 				Main.data.setStat(p.getUniqueId(), "WINS", Main.data.getStat(p.getUniqueId(), "WINS") + 1);
 				p.sendMessage(ChatColor.LIGHT_PURPLE + "+200 XP (win)");
 				Main.data.setStat(p.getUniqueId(), "XP", Main.data.getStat(p.getUniqueId(), "XP") + 200);

@@ -88,7 +88,7 @@ public class VoteCommand implements Listener, CommandExecutor {
 				
 				int numVotes = 1;
 				
-				if (Main.connected == true) {
+				if (Main.connectedToPlayerDB == true) {
 					
 					String rank = Main.data.getRank(player.getUniqueId());
 					if (rank.equals("DIAMOND")) {

@@ -35,7 +35,7 @@ public class Chat implements Listener{
 		
 		
 		if (PlayersSpecs.players.contains(pl)) {
-			int lvl = 1; //Main.data.getStat(pl.getUniqueId(), "LEVEL");
+			int lvl = (Main.connectedToPlayerDB)? Main.data.getStat(pl.getUniqueId(), "LEVEL") : 0;
 			String level = StringFunctions.surround(lvl + "★", ChatColor.YELLOW + "");
 			String msg = ChatColor.WHITE + event.getMessage();
 			

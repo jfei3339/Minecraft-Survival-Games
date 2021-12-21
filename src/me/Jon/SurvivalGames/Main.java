@@ -103,7 +103,8 @@ public class Main extends JavaPlugin implements Listener{
 	
 	public MySQL_status SQL_status;
 	public static SQLGetter_status statusdata;
-	public static boolean connected = false;
+	public static boolean connectedToPlayerDB = false;
+	public static boolean connectedToStatusDB = false;
 	public int count = 0;
 	
 
@@ -143,21 +144,29 @@ public class Main extends JavaPlugin implements Listener{
 		
 		try {
 			SQL.connect();
+		} catch (ClassNotFoundException | SQLException e) {
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "\n Database NOT connected to player database.\n");
+		}
+		
+		try {
 			SQL_status.connect();
 		} catch (ClassNotFoundException | SQLException e) {
-
-			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "\n Database NOT connected \n");
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "\n Database NOT connected to status database. \n");
 		}
 		
 		if (SQL.isConnected()) {
-			connected = true;
-			Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "\n\n\n Database IS connected \n\n\n");
-			
-			data.createDataTable(); //create table if it doesn't exist
+			connectedToPlayerDB = true;
+			Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "\n\n\n Database IS connected to player database\n\n\n");
+			data.createDataTable(); //create tables if it don't exist
 			data.createInfoTable();
-			getServer().getPluginManager().registerEvents(new SQLevents(), this);
-
-		} 
+			getServer().getPluginManager().registerEvents(new SQLevents(), this); //register SQL events
+		}
+		
+		if (SQL_status.isConnected()) {
+			connectedToStatusDB = true;
+			Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "\n\n\n Database IS connected to status database\n\n\n");
+			statusdata.createStatusTable(); //create table if it doesn't exist
+		}
 		
 		//Console will say plugin has been enabled
 		getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "\n SG has been Enabled \n");
@@ -222,7 +231,11 @@ public class Main extends JavaPlugin implements Listener{
 	 */
 	public void onDisable() {
 		gameState = GameState.RESTARTING;
-		statusdata.setStat(serverName, "STATUS", "RESTARTING");
+		
+		if (connectedToStatusDB) {
+			statusdata.setStat(serverName, "STATUS", "RESTARTING");
+		}
+		
 		if (winningMap != null) {
 			Bukkit.getServer().unloadWorld(winningMap, true);
 		}
@@ -232,11 +245,12 @@ public class Main extends JavaPlugin implements Listener{
 		
 		File playerFilesDir = new File("lobby/playerdata");
 		if(playerFilesDir.isDirectory()){
-		String[] playerDats = playerFilesDir.list();
-		for (int i = 0; i < playerDats.length; i++) {
-		File datFile = new File(playerFilesDir, playerDats[i]); 
-		datFile.delete();
-		} }
+			String[] playerDats = playerFilesDir.list();
+			for (int i = 0; i < playerDats.length; i++) {
+				File datFile = new File(playerFilesDir, playerDats[i]); 
+				datFile.delete();
+			} 
+		}
 		
 		
 		SQL.disconnect();
@@ -263,7 +277,7 @@ public class Main extends JavaPlugin implements Listener{
 	            	
 	            	//dummy to make sure no database timeout
 	            	if (count == 0) {
-	            		if (Main.connected == true) {
+	            		if (Main.connectedToPlayerDB == true) {
 	            			data.dummy();
 	            		}
 	            	}
@@ -271,7 +285,7 @@ public class Main extends JavaPlugin implements Listener{
 	            	count++;
 	            	if (count == 60) {
 	            		count = 0;
-	            		if (Main.connected == true) {
+	            		if (Main.connectedToPlayerDB == true) {
 	            			data.dummy();
 	            		}
 	            		
@@ -348,7 +362,6 @@ public class Main extends JavaPlugin implements Listener{
 							Bukkit.broadcastMessage(prefix + ChatColor.RED + (preTimeLeft+1) + ChatColor.GREEN + " seconds left until the game starts!");
 						}
 						
-						
 						if (preTimeLeft == -1) {
 							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Let the Games Begin!");
 							gameState = GameState.INGAME;
@@ -361,6 +374,7 @@ public class Main extends JavaPlugin implements Listener{
 						if (PlayersSpecs.players.size() == 1) {
 							Celebration.celebrate();				
 						} else if (PlayersSpecs.players.size() == 0) {
+							
 							gameState = GameState.CLEANUP;
 						}
 					}
@@ -493,17 +507,17 @@ public class Main extends JavaPlugin implements Listener{
 						if (cleanupTimeLeft == -1) {
 							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "The server is restarting.");
 							
-							for (Player p: Bukkit.getOnlinePlayers()) {
-								//p.kickPlayer("Server is restarting");
-								bungee.connect(p, "hub");
-							}
-							
+//							for (Player p: Bukkit.getOnlinePlayers()) {
+//								//p.kickPlayer("Server is restarting");
+//								bungee.connect(p, "hub");
+//							}
+//							
 						}
 						
 						if (cleanupTimeLeft == -4) {
 							
 							//update stats at once at the end of the game
-							if (Main.connected == true) {
+							if (Main.connectedToPlayerDB == true) {
 								for (Player p: PlayersSpecs.playersKills.keySet()) {
 									UUID uuid = p.getUniqueId();
 
