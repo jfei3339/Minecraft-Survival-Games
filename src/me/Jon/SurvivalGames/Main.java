@@ -11,7 +11,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 
 
@@ -50,8 +49,8 @@ public class Main extends JavaPlugin implements Listener{
 	private final OverrideCommands overrideCommands = new OverrideCommands();
 	private final AdminCommands adminCommands = new AdminCommands();
 	
-	//this communicates to other servers
-	private PluginMessage bungee = new PluginMessage();
+	//this communicates to other servers. Useful for an actual server network, but disabled for current purposes.
+//	private PluginMessage bungee = new PluginMessage();
 	
 	//game variables
 	public static final String serverIP = ChatColor.AQUA + "" + ChatColor.BOLD + "By Jonathan Fei";
@@ -263,7 +262,7 @@ public class Main extends JavaPlugin implements Listener{
 	public static String winningMap;
 	public static double DMDistance;
 	private double xCenter;
-	private double yCenter;
+	//private double yCenter;
 	private double zCenter;
 	
 	/**
@@ -414,7 +413,7 @@ public class Main extends JavaPlugin implements Listener{
 							gameState = GameState.PREDM;
 							
 							xCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".x"); //toLowerCase()
-							yCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".y");
+							//yCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".y");
 							zCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".z");
 						
 							for (Player p: Bukkit.getOnlinePlayers()) {
@@ -458,13 +457,11 @@ public class Main extends JavaPlugin implements Listener{
 								Location loc = p.getLocation();
 								int x = loc.getBlockX();
 								int z = loc.getBlockZ();
-								
 								if (Math.sqrt((x-xCenter)*(x-xCenter) + (z-zCenter)*(z-zCenter)) > DMDistance) {
 									p.getLocation().getWorld().spawnEntity(p.getLocation(), EntityType.LIGHTNING);
 									p.sendMessage(prefix + ChatColor.RED + "Please return to spawn!"); 
 									
 								}
-								
 								
 							}
 							
@@ -504,11 +501,11 @@ public class Main extends JavaPlugin implements Listener{
 						if (cleanupTimeLeft == -1) {
 							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "The server is restarting.");
 							
-//							for (Player p: Bukkit.getOnlinePlayers()) {
-//								//p.kickPlayer("Server is restarting");
-//								bungee.connect(p, "hub");
-//							}
-//							
+							for (Player p: Bukkit.getOnlinePlayers()) {
+								p.kickPlayer("Server is restarting");
+								//bungee.connect(p, "hub");
+							}
+							
 						}
 						
 						if (cleanupTimeLeft == -4) {
@@ -517,7 +514,6 @@ public class Main extends JavaPlugin implements Listener{
 							if (Main.connectedToPlayerDB == true) {
 								for (Player p: PlayersSpecs.playersKills.keySet()) {
 									UUID uuid = p.getUniqueId();
-
 									
 									playerData.setStat(uuid, "XP", playerData.getStat(uuid, "XP") + PlayersSpecs.playersXP.get(p));
 									playerData.setStat(uuid, "KILLS", playerData.getStat(uuid, "KILLS") + PlayersSpecs.playersKills.get(p));
@@ -528,10 +524,6 @@ public class Main extends JavaPlugin implements Listener{
 									int newLevel = SQLevents.getProgress(p)[0];
 									
 									playerData.setStat(uuid, "LEVEL", newLevel);
-									
-									
-																		
-									//data.setStat(uuid, "KDR", kdr);
 									
 								}
 							}
