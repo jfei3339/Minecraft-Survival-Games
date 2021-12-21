@@ -9,8 +9,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Main;
-import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.SGScoreboards;
 
@@ -19,19 +20,21 @@ import me.Jon.SurvivalGames.SGScoreboards;
  */
 public class PreEvents implements Listener {
 	
+	private SGScoreboards scoreboards = new SGScoreboards();
+	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) { //don't let player join if in pregame
-		if (Main.gameState.equals(GameState.PREGAME)) {
+		if (Main.game.gameState.equals(GameState.PREGAME)) {
 			Player player = event.getPlayer();
 			PlayersSpecs.spectators.add(player);
-			SGScoreboards.createScoreboard(player);			
+			scoreboards.createScoreboard(player);			
 			
 		}
 	}
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		if (Main.gameState.equals(GameState.PREGAME)) {
+		if (Main.game.gameState.equals(GameState.PREGAME)) {
 			if (PlayersSpecs.players.contains(event.getPlayer())) {
 				PlayersSpecs.players.remove(event.getPlayer());
 			}
@@ -45,14 +48,14 @@ public class PreEvents implements Listener {
 	
 	@EventHandler
 	public void onDamage(EntityDamageEvent event) {
-		if (Main.gameState.equals(GameState.PREGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.CLEANUP) ) {
+		if (Main.game.gameState.equals(GameState.PREGAME) || Main.game.gameState.equals(GameState.PREDM) || Main.game.gameState.equals(GameState.CLEANUP) ) {
 			event.setCancelled(true);
 		}
 	}
 	
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
-		if ((Main.gameState.equals(GameState.PREGAME) || Main.gameState.equals(GameState.PREDM)) &&  PlayersSpecs.players.contains(e.getPlayer())) {
+		if ((Main.game.gameState.equals(GameState.PREGAME) || Main.game.gameState.equals(GameState.PREDM)) &&  PlayersSpecs.players.contains(e.getPlayer())) {
 			Player player = e.getPlayer();
 			Location from = e.getFrom();
 			
@@ -66,7 +69,7 @@ public class PreEvents implements Listener {
 	
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
-		if (Main.gameState.equals(GameState.PREGAME)) {
+		if (Main.game.gameState.equals(GameState.PREGAME)) {
 			event.setCancelled(true);
 		}
 	}

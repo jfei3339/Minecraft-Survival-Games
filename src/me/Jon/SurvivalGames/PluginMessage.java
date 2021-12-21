@@ -6,7 +6,6 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import me.Jon.SurvivalGames.Main;
 
 /*
  * Class for Bungeecord. Currently not using.
@@ -35,7 +34,7 @@ public class PluginMessage implements PluginMessageListener{
 		output.writeUTF(server);
 		
 		//Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "" + Main.getInstance());
-		player.sendPluginMessage(Main.getInstance(), "BungeeCord", output.toByteArray());
+//		player.sendPluginMessage(Main.getInstance(), "BungeeCord", output.toByteArray());
 	}
 
 }

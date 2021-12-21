@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Main;
-import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.SGScoreboards;
 import me.Jon.SurvivalGames.Transition;
 import me.Jon.SurvivalGames.Events.ChestOpenEvent;
@@ -17,6 +17,7 @@ import net.md_5.bungee.api.ChatColor;
 public class AdminCommands implements Listener, CommandExecutor {
 
 	public String cmd1 = "forcenext";
+	private final SGScoreboards scoreboards = new SGScoreboards();
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -27,26 +28,26 @@ public class AdminCommands implements Listener, CommandExecutor {
 				
 				String rank = Main.playerData.getRank(((Player) sender).getUniqueId());
 				if (rank.equals("ADMIN") || rank.equals("OWNER")) {
-					if (Main.gameState.equals(GameState.LOBBY)) {
-						Main.winningMap = Transition.determineWinningMap();
-						ChestOpenEvent.getTier2Locations(Main.winningMap.toLowerCase());
+					if (Main.game.gameState.equals(GameState.LOBBY)) {
+						Main.game.winningMap = Transition.determineWinningMap();
+						ChestOpenEvent.getTier2Locations(Main.game.winningMap.toLowerCase());
 						
-						Bukkit.broadcastMessage(Main.prefix + ChatColor.YELLOW + Main.winningMap + ChatColor.GREEN +  " will be played!");
-						Main.countdownResetFlag = false;
-						Transition.teleportPlayers(Main.winningMap);
+						Bukkit.broadcastMessage(Main.prefix + ChatColor.YELLOW + Main.game.winningMap + ChatColor.GREEN +  " will be played!");
+						Main.game.countdownResetFlag = false;
+						Transition.teleportPlayers(Main.game.winningMap);
 						
-						Bukkit.getWorld(Main.winningMap).setTime(100);
+						Bukkit.getWorld(Main.game.winningMap).setTime(100);
 						
 						//distance for lightning strikes in DM
-						Main.DMDistance = 1.25*Transition.DMLightningDist(Main.winningMap);
+						Main.game.DMDistance = 1.25*Transition.DMLightningDist(Main.game.winningMap);
 						
-						Main.gameState = GameState.PREGAME;
+						Main.game.gameState = GameState.PREGAME;
 						
 						
 						//new scoreboard
 						for (Player p: Bukkit.getServer().getOnlinePlayers()) {
 							p.getScoreboard().getObjective("Lobby").getScore(ChatColor.WHITE + "Watching: ").setScore(2);
-							SGScoreboards.updatePreScoreboard(p);
+							scoreboards.updatePreScoreboard(p);
 						}
 					}
 				} else {

@@ -2,16 +2,13 @@ package me.Jon.SurvivalGames;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.UUID;
+
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
+
 import org.bukkit.WorldCreator;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 
 import me.Jon.SurvivalGames.Events.Chat;
@@ -48,73 +45,27 @@ public class Main extends JavaPlugin implements Listener{
 	private final InGameCommands inGameCommands = new InGameCommands();
 	private final OverrideCommands overrideCommands = new OverrideCommands();
 	private final AdminCommands adminCommands = new AdminCommands();
-	
-	//this communicates to other servers. Useful for an actual server network, but disabled for current purposes.
-//	private PluginMessage bungee = new PluginMessage();
-	
-	//game variables
+
+	//server variables
 	public static final String serverIP = ChatColor.AQUA + "" + ChatColor.BOLD + "By Jonathan Fei";
-	public static final  String prefix = ChatColor.DARK_GRAY + StringFunctions.surround("Server", ChatColor.GOLD + "");
+	public static final  String prefix = ChatColor.DARK_GRAY + StringFunctions.surround("SG", ChatColor.GOLD + "");
 	public static String serverName;
 	
-	public final static int minPlayers = 6;
+	//server/map information
+	private MapSpawns mapSpawns;
+	private MapTier2 mapTier2;
+	private ServerInfo serverInfo;
 	
-	public static final int lobbyMinTime = 60;
-	public static int lobbyTimeLeft = lobbyMinTime;
-	
-	public static final int preMinTime = 15;
-	public static  int preTimeLeft = preMinTime;
-	
-	final public static int inGameMinTime = 1200;
-	public static int inGameTimeLeft = inGameMinTime;
-	
-	final public static int preDMMinTime = 10;
-	public static int preDMTimeLeft = preDMMinTime;
-	
-	final public static int DMMinTime = 180;
-	public static int DMTimeLeft = DMMinTime;
-	
-	final public static int cleanupMinTime = 10;
-	public static int cleanupTimeLeft = cleanupMinTime;
-	
-	final public static int refill1Time = 600;
-	final public static int refill2Time = 120;
-	
-	//enum representing the current state of the game.
-	public static enum GameState {
-		LOBBY, 
-		PREGAME,
-		INGAME,
-		PREDM,
-		DEATHMATCH,
-		CLEANUP,
-		RESTARTING
-	}
-	
-	public static GameState gameState = GameState.LOBBY;
-	
-	private MapSpawns mp;
-	private MapTier2 mt;
-	private ServerInfo si;
-	
+	//SQL
 	public MySQL SQL;
 	public static SQLGetter playerData;
 	
 	public MySQL_status SQL_status;
-	public static SQLGetter_status statusData;
+	public SQLGetter_status statusData;
 	public static boolean connectedToPlayerDB = false;
 	public static boolean connectedToStatusDB = false;
-	public int count = 0;
 	
-
-	private static Main instance;
-	
-	/**
-	 * Returns an instance of this class
-	 */
-	public static Main getInstance() {
-		return instance;
-	}
+	public static Game game;
 	
 	/**
 	 * Registers commands, connects to SQL server, registers events, and starts the game when the server is launched.
@@ -123,7 +74,6 @@ public class Main extends JavaPlugin implements Listener{
 		
 		//get map locations
 		loadData();
-
 		
 		//get rid of playerdata, remove weird bugs
 		File playerFilesDir = new File("lobby/playerdata");
@@ -204,7 +154,9 @@ public class Main extends JavaPlugin implements Listener{
 		
 		this.getCommand(adminCommands.cmd1).setExecutor(adminCommands);
 		
-		startSG();
+		//initialize and start game
+		game = new Game(prefix, playerData);
+		game.start(this);
 		
 ;	}
 	
@@ -213,15 +165,12 @@ public class Main extends JavaPlugin implements Listener{
 	 * Loads in the map data, such as chest locations and spawns
 	 */
 	public void loadData() {
-		mp = new MapSpawns();
-		mp.setupMapSpawns();
-		
-		mt = new MapTier2();
-		mt.setupMapTier2();
-		
-		si = new ServerInfo();
-		si.setupConfig();
-		
+		mapSpawns = new MapSpawns();
+		mapSpawns.setupMapSpawns();
+		mapTier2 = new MapTier2();
+		mapTier2.setupMapTier2();
+		serverInfo = new ServerInfo();
+		serverInfo.setupConfig();
 		serverName = ServerInfo.ServerConfig.getString("serverName");
 	}
 	
@@ -229,14 +178,13 @@ public class Main extends JavaPlugin implements Listener{
 	 * Resets certain player data.
 	 */
 	public void onDisable() {
-		gameState = GameState.RESTARTING;
 		
 		if (connectedToStatusDB) {
 			statusData.setStat(serverName, "STATUS", "RESTARTING");
 		}
 		
-		if (winningMap != null) {
-			Bukkit.getServer().unloadWorld(winningMap, true);
+		if (game.getWinningMap() != null) {
+			Bukkit.getServer().unloadWorld(game.getWinningMap(), true);
 		}
 		
 		Bukkit.broadcastMessage(prefix + ChatColor.LIGHT_PURPLE + "Trying to delete player data");
@@ -256,293 +204,11 @@ public class Main extends JavaPlugin implements Listener{
 		getServer().getConsoleSender().sendMessage(ChatColor.RED + "\n SG has been Disabled \n");
 	}
 	
-	public static int taskID;
-	public static boolean countdownResetFlag = true;
-	public static boolean DMcountdown = false;
-	public static String winningMap;
-	public static double DMDistance;
-	private double xCenter;
-	//private double yCenter;
-	private double zCenter;
-	
-	/**
-	 * Method that controls the game with a runnable.
-	 */
-	public void startSG() {
-	        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-	        taskID = scheduler.scheduleSyncRepeatingTask(this, new Runnable() {
-	            @Override
-	            public void run() {
-	            	
-	            	//dummy to make sure no database timeout
-	            	if (count == 0) {
-	            		if (Main.connectedToPlayerDB == true) {
-	            			playerData.dummy();
-	            		}
-	            	}
-
-	            	count++;
-	            	if (count == 60) {
-	            		count = 0;
-	            		if (Main.connectedToPlayerDB == true) {
-	            			playerData.dummy();
-	            		}
-	            		
-	            		if (Main.gameState.equals(GameState.INGAME)) {
-	            			Bukkit.broadcastMessage(prefix + StringFunctions.surround(String.valueOf(PlayersSpecs.players.size()), ChatColor.RED + "") + ChatColor.GREEN + " tribute(s) still remain.");
-	            		}
-	            	}
-	            	
-	            	//Updating scoreboard
-					for (Player p: Bukkit.getServer().getOnlinePlayers()) {
-						if (gameState.equals(GameState.LOBBY)) {
-							SGScoreboards.updateLobbyScoreboard(p);	
-						} else if (gameState.equals(GameState.PREGAME))	{
-							SGScoreboards.updatePreScoreboard(p);
-						} else if (gameState.equals(GameState.INGAME)) {
-							SGScoreboards.updateInGameScoreboard(p);
-						} else if (gameState.equals(GameState.PREDM)) {
-							SGScoreboards.updatePreDMScoreboard(p);
-						} else if (gameState.equals(GameState.DEATHMATCH)) {
-							SGScoreboards.updateDMScoreboard(p);
-						} else if (gameState.equals(GameState.CLEANUP)) {
-							SGScoreboards.updateCleanupScoreboard(p);
-						}
-								
-					} 		
-					
-					//LOBBY
-					if (gameState.equals(GameState.LOBBY)) {
-						if (Bukkit.getOnlinePlayers().size() >= minPlayers && countdownResetFlag == true) {
-							
-							lobbyTimeLeft -= 1;
-							
-							if (lobbyTimeLeft == -1) {
-								
-								
-								//Declare map winner, teleport players to map.
-								winningMap = Transition.determineWinningMap();
-								ChestOpenEvent.getTier2Locations(winningMap);
-								
-								Bukkit.broadcastMessage(prefix + ChatColor.YELLOW + winningMap + ChatColor.GREEN +  " will be played!");
-								countdownResetFlag = false;
-								Transition.teleportPlayers(winningMap);
-								Bukkit.getWorld(winningMap).setTime(0);
-
-								//distance for lightning strikes in DM
-								DMDistance = 1.3*Transition.DMLightningDist(winningMap);
-								gameState = GameState.PREGAME;
-								
-								//new scoreboard
-								for (Player p: Bukkit.getServer().getOnlinePlayers()) {
-									p.getScoreboard().getObjective("Lobby").getScore(ChatColor.WHITE + "Watching: ").setScore(2);
-									SGScoreboards.updatePreScoreboard(p);
-								}
-				
-							}
-							if (lobbyTimeLeft <= 9 && lobbyTimeLeft >= 0) {
-								Bukkit.broadcastMessage(prefix + ChatColor.RED + (lobbyTimeLeft+1) + ChatColor.GREEN + " seconds left until voting ends!");
-							}
-						}
-						
-						if (Bukkit.getOnlinePlayers().size() < minPlayers) {
-							countdownResetFlag = true;
-							lobbyTimeLeft = lobbyMinTime;						
-						}
-					}
-					
-					//PREGAME
-					if (gameState.equals(GameState.PREGAME))	{ 
-						
-						preTimeLeft -= 1;
-						
-						if (preTimeLeft <= 9 && preTimeLeft >= 0) {
-							Bukkit.broadcastMessage(prefix + ChatColor.RED + (preTimeLeft+1) + ChatColor.GREEN + " seconds left until the game starts!");
-						}
-						
-						if (preTimeLeft == -1) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Let the Games Begin!");
-							gameState = GameState.INGAME;
-							for (Player p: Bukkit.getOnlinePlayers()) {
-								SGScoreboards.updateInGameScoreboard(p);
-							}
-						}
-						
-						//did someone win?
-						if (PlayersSpecs.players.size() == 1) {
-							Celebration.celebrate();
-						} else if (PlayersSpecs.players.size() == 0) {
-							gameState = GameState.CLEANUP;
-						}
-					}
-					
-					//INGAME	
-					if (gameState.equals(GameState.INGAME)) {
-						
-						inGameTimeLeft -= 1;
-						
-						if (PlayersSpecs.players.size() <= 3 && DMcountdown == false) {
-							DMcountdown = true;
-							if (inGameTimeLeft > 60) {
-								inGameTimeLeft = 60;
-								for (Player p: Bukkit.getOnlinePlayers()) {
-									SGScoreboards.updateInGameScoreboard(p);
-								}
-							}
-							
-						}
-						
-						//chest refill
-						if (inGameTimeLeft == refill1Time-1) {
-							ChestOpenEvent.refill1 = true;
-							Bukkit.broadcastMessage(prefix + ChatColor.YELLOW + "Sponsors have refilled the chests!");	
-						} else if (inGameTimeLeft == refill2Time-1) {
-							ChestOpenEvent.refill2 = true;
-							Bukkit.broadcastMessage(prefix + ChatColor.YELLOW + "Sponsors have refilled the chests!");	
-						}
-						
-						if (inGameTimeLeft == 59) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Players will be teleported to Deathmatch in 60 seconds!");						
-						} else if (inGameTimeLeft == 29) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Players will be teleported to Deathmatch in 30 seconds!");
-						} else if (inGameTimeLeft <= 9 && inGameTimeLeft >= 0) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Players will be teleported to Deathmatch in " + ChatColor.RED + (inGameTimeLeft+1) + ChatColor.GREEN + " seconds!");
-						} else if (inGameTimeLeft == -1) {
-							
-							Transition.teleportDM(winningMap);
-							gameState = GameState.PREDM;
-							
-							xCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".x"); //toLowerCase()
-							//yCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".y");
-							zCenter = MapSpawns.mapSpawnsConfig.getDouble("Maps. " + winningMap + ".pos" + 0 + ".z");
-						
-							for (Player p: Bukkit.getOnlinePlayers()) {
-								SGScoreboards.updatePreDMScoreboard(p);
-							}
-						}
-						
-						//did someone win?
-						if (PlayersSpecs.players.size() == 1) {
-							Celebration.celebrate();
-						} else if (PlayersSpecs.players.size() == 0) {
-							gameState = GameState.CLEANUP;
-						}
-					}
-					
-					//PREDM
-					if (gameState.equals(GameState.PREDM)) {
-						preDMTimeLeft -= 1;
-						
-						if (preDMTimeLeft <= 9 && preDMTimeLeft >= 0) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Deathmatch will begin in " + ChatColor.RED + (preDMTimeLeft+1) + ChatColor.GREEN +  " seconds!");
-						} else if (preDMTimeLeft == -1) {
-							gameState = GameState.DEATHMATCH;
-						}
-						
-						//did someone win?
-						if (PlayersSpecs.players.size() == 1) {
-							Celebration.celebrate();
-						} else if (PlayersSpecs.players.size() == 0) {
-							gameState = GameState.CLEANUP;
-						}
-					}
-					
-					//DM
-					if (gameState.equals(GameState.DEATHMATCH)) {
-						DMTimeLeft -= 1;
-						
-						//get lightning dist
-						for (Player p: PlayersSpecs.players) {
-							if (DMTimeLeft % 3 == 0) {
-								Location loc = p.getLocation();
-								int x = loc.getBlockX();
-								int z = loc.getBlockZ();
-								if (Math.sqrt((x-xCenter)*(x-xCenter) + (z-zCenter)*(z-zCenter)) > DMDistance) {
-									p.getLocation().getWorld().spawnEntity(p.getLocation(), EntityType.LIGHTNING);
-									p.sendMessage(prefix + ChatColor.RED + "Please return to spawn!"); 
-									
-								}
-								
-							}
-							
-						}
-						
-						if (DMTimeLeft == 119) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Deathmatch will end in " + ChatColor.RED + 2 + ChatColor.GREEN +  " minutes!");
-						} else if (DMTimeLeft == 59) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Deathmatch will end in " + ChatColor.RED + (DMTimeLeft+1) + ChatColor.GREEN +  " seconds!");
-							DMDistance /= 2;
-						} else if (DMTimeLeft == 29) {
-							DMDistance /= 2;
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Deathmatch will end in " + ChatColor.RED + (DMTimeLeft+1) + ChatColor.GREEN +  " seconds!");
-						} else if (DMTimeLeft <= 9 && DMTimeLeft >= 0) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "Deathmatch will begin in " + ChatColor.RED + (DMTimeLeft+1) + ChatColor.GREEN +  " seconds!");
-							DMDistance /= 1.2;
-						} else if (DMTimeLeft == -1) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "The game has ended!");
-							gameState = GameState.CLEANUP;
-						}
-						
-						//did someone win?
-						if (PlayersSpecs.players.size() == 1) {
-
-							
-							Celebration.celebrate();
-						} else if (PlayersSpecs.players.size() == 0) {
-							
-							gameState = GameState.CLEANUP;
-						}
-					}
-					
-					//CLEANUP
-					if (gameState.equals(GameState.CLEANUP)) {
-						cleanupTimeLeft -= 1;
-						
-						if (cleanupTimeLeft == -1) {
-							Bukkit.broadcastMessage(prefix + ChatColor.GREEN + "The server is restarting.");
-							
-							for (Player p: Bukkit.getOnlinePlayers()) {
-								p.kickPlayer("Server is restarting");
-								//bungee.connect(p, "hub");
-							}
-							
-						}
-						
-						if (cleanupTimeLeft == -4) {
-							
-							//update stats at once at the end of the game
-							if (Main.connectedToPlayerDB == true) {
-								for (Player p: PlayersSpecs.playersKills.keySet()) {
-									UUID uuid = p.getUniqueId();
-									
-									playerData.setStat(uuid, "XP", playerData.getStat(uuid, "XP") + PlayersSpecs.playersXP.get(p));
-									playerData.setStat(uuid, "KILLS", playerData.getStat(uuid, "KILLS") + PlayersSpecs.playersKills.get(p));
-									playerData.setStat(uuid, "CHESTS", playerData.getStat(uuid, "CHESTS") + PlayersSpecs.playersChests.get(p));
-									
-									Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "\nPLAYER STATS UPDATED!\n");
-									
-									int newLevel = SQLevents.getProgress(p)[0];
-									
-									playerData.setStat(uuid, "LEVEL", newLevel);
-									
-								}
-							}
-							
-							Bukkit.shutdown();	
-						}
-					}
-	            }
-	        }, 0L, 20L);
-	    }
-	
-	
-	
-
     //Unload maps, to rollback maps. Will delete all player builds until last server save
     public static void unloadMap(String mapname){
-        if(Bukkit.getServer().unloadWorld(Bukkit.getServer().getWorld(mapname), false)){
+        if (Bukkit.getServer().unloadWorld(Bukkit.getServer().getWorld(mapname), false)){
             Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "SUCCESSFULLY UNLOADED " + mapname);
-        }else{
+        } else {
         	Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "COULD NOT UNLOAD " + mapname);
         }
     }

@@ -14,8 +14,9 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import me.Jon.SurvivalGames.SGScoreboards;
 import me.Jon.SurvivalGames.ServerActions.LobbyActions;
+import me.Jon.SurvivalGames.Game;
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Main;
-import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import net.md_5.bungee.api.ChatColor;
 
@@ -23,6 +24,8 @@ import net.md_5.bungee.api.ChatColor;
  * Class managing the logistics of a player joining the server while still waiting for the game to start.
  */
 public class LobbyEvents implements Listener{
+	
+	private SGScoreboards scoreboards = new SGScoreboards();
 	
 	@EventHandler
     public void onPlayerLoginEvent(PlayerLoginEvent e){ //kick players
@@ -50,7 +53,7 @@ public class LobbyEvents implements Listener{
 		
 		//join message, holds regardless of everything else (spec join event)
 		
-		if (Main.connectedToPlayerDB == true && Main.gameState != GameState.CLEANUP) {
+		if (Main.connectedToPlayerDB == true && Main.game.gameState != GameState.CLEANUP) {
 			
 			Main.playerData.dataCreatePlayer(p);
 			Main.playerData.infoCreatePlayer(p);
@@ -85,7 +88,7 @@ public class LobbyEvents implements Listener{
 				PlayersSpecs.nameColors.put(p, ChatColor.DARK_GREEN + "");
 			}
 			
-			if (Main.gameState != GameState.CLEANUP) {
+			if (Main.game.gameState != GameState.CLEANUP) {
 				Bukkit.broadcastMessage(PlayersSpecs.nameColors.get(p) + p.getDisplayName() + ChatColor.GOLD + " has joined.");
 			}
 			
@@ -93,13 +96,13 @@ public class LobbyEvents implements Listener{
 			PlayersSpecs.nameColors.put(p, ChatColor.DARK_GREEN + "");
 		}
 
-		if (Main.gameState.equals(GameState.LOBBY)) {
+		if (Main.game.gameState.equals(GameState.LOBBY)) {
 			LobbyActions.clearPlayer(p);
 			
 			p.teleport(new Location(Bukkit.getWorld("lobby"), 43.0, 66.0, -30.0, -90, 0));
 			PlayersSpecs.players.add(p);
-			SGScoreboards.createScoreboard(p);		
-			p.sendMessage(Main.prefix + ChatColor.GREEN + "A minimum of "  + ChatColor.RED + Main.minPlayers + ChatColor.GREEN + " players is required to start the game.");
+			scoreboards.createScoreboard(p);		
+			p.sendMessage(Main.prefix + ChatColor.GREEN + "A minimum of "  + ChatColor.RED + Game.minPlayers + ChatColor.GREEN + " players is required to start the game.");
 			p.sendMessage(Main.prefix + ChatColor.GREEN + "Use /v to view the maps and /v # to vote for a map!");
 
 		}
@@ -109,7 +112,7 @@ public class LobbyEvents implements Listener{
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {	
 		
-		if (Main.gameState.equals(GameState.LOBBY)) {
+		if (Main.game.gameState.equals(GameState.LOBBY)) {
 			Player player = event.getPlayer();
 			PlayersSpecs.players.remove(player);
 			Bukkit.broadcastMessage(PlayersSpecs.nameColors.get(player) + player.getDisplayName() + ChatColor.GOLD + " has left.");
@@ -119,21 +122,21 @@ public class LobbyEvents implements Listener{
 	
 	@EventHandler
 	public void onDamage(EntityDamageEvent event) {
-		if (Main.gameState.equals(GameState.LOBBY) || Main.gameState.equals(GameState.PREGAME) || Main.gameState.equals(GameState.PREDM)) {
+		if (Main.game.gameState.equals(GameState.LOBBY) || Main.game.gameState.equals(GameState.PREGAME) || Main.game.gameState.equals(GameState.PREDM)) {
 			event.setCancelled(true);
 		}
 	}
 	
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
-		if (Main.gameState.equals(GameState.LOBBY) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+		if (Main.game.gameState.equals(GameState.LOBBY) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
 			event.setCancelled(true);
 		}
 	}
 	
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
-		if (Main.gameState.equals(GameState.LOBBY) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+		if (Main.game.gameState.equals(GameState.LOBBY) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
 			event.setCancelled(true);
 		}
 	}

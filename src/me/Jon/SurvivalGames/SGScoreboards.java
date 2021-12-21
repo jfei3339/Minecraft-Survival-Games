@@ -9,8 +9,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Data.ServerInfo;
-import me.Jon.SurvivalGames.Main.GameState;
 import net.md_5.bungee.api.ChatColor;
 
 /*
@@ -23,7 +23,7 @@ public class SGScoreboards {
 	 * 
 	 * @param player the player to create a scoreboard for
 	 */
-	public static void createScoreboard(Player player) {
+	public void createScoreboard(Player player) {
 		
 		ScoreboardManager m = Bukkit.getScoreboardManager();
 		Scoreboard b = m.getNewScoreboard();
@@ -31,24 +31,19 @@ public class SGScoreboards {
 		Objective o = b.registerNewObjective("Lobby", "dummy");
 		o.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
-		if (Main.gameState.equals(GameState.LOBBY)) {
-			if (Main.lobbyTimeLeft == 60) {
-				o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 1:00");
-			} else if (Main.lobbyTimeLeft > 9) {
-				o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:" + Main.lobbyTimeLeft);
-			} else if (Main.lobbyTimeLeft >= 0){
-				o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:0" + Main.lobbyTimeLeft);
-			} else {
-				o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:00");
-			}
-		} else if (Main.gameState.equals(GameState.PREGAME)) {
-			if (Main.preTimeLeft > 9) {
-				b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "PreGame" + ChatColor.RED + " 0:" + Main.preTimeLeft);
-			} else if (Main.preTimeLeft >= 0){
-				b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "PreGame" + ChatColor.RED + " 0:0" + Main.preTimeLeft);
-			} else {
-				b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "PreGame" + ChatColor.RED + " 0:00");
-			}
+		if (Main.game.gameState.equals(GameState.LOBBY)) {
+			
+			if (Main.game.getTimeLeft() == 60) o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 1:00");
+			else if (Main.game.getTimeLeft() > 9) o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:" + Main.game.getTimeLeft());
+			else if (Main.game.getTimeLeft() >= 0) o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:0" + Main.game.getTimeLeft());
+			else o.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:00");
+			
+		} else if (Main.game.gameState.equals(GameState.PREGAME)) {
+			
+			if (Main.game.getTimeLeft() > 9) b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "PreGame" + ChatColor.RED + " 0:" + Main.game.getTimeLeft());
+			else if (Main.game.getTimeLeft() >= 0) b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "PreGame" + ChatColor.RED + " 0:0" + Main.game.getTimeLeft());
+			else b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "PreGame" + ChatColor.RED + " 0:00");
+			
 		}
 
 		
@@ -63,7 +58,7 @@ public class SGScoreboards {
 		watching.setPrefix("");
 		watching.setSuffix("" + ChatColor.GREEN + PlayersSpecs.spectators.size());
 		
-		if (Main.gameState.equals(GameState.PREGAME) || Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH) || Main.gameState.equals(GameState.CLEANUP) ) {
+		if (Main.game.gameState.equals(GameState.PREGAME) || Main.game.gameState.equals(GameState.INGAME) || Main.game.gameState.equals(GameState.PREDM) || Main.game.gameState.equals(GameState.DEATHMATCH) || Main.game.gameState.equals(GameState.CLEANUP) ) {
 			o.getScore(ChatColor.WHITE + "Watching: ").setScore(2);
 		}
 		//watching.setScore(2);
@@ -112,16 +107,18 @@ public class SGScoreboards {
 	 * 
 	 * @param player: the player whose scoreboard to update
 	 */
-	public static void updateLobbyScoreboard(Player player) {
+	public void updateLobbyScoreboard(Player player) {
 		
 		Scoreboard b = player.getScoreboard();
 		b.getTeam("playing").setSuffix("" + ChatColor.GREEN + PlayersSpecs.players.size());
-		if (Main.lobbyTimeLeft == 60) {
+		int timeLeft = Main.game.getTimeLeft();
+		
+		if (timeLeft == 60) {
 			b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 1:00");
-		} else if (Main.lobbyTimeLeft > 9) {
-			b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:" + Main.lobbyTimeLeft);
-		} else if (Main.lobbyTimeLeft >= 0){
-			b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:0" + Main.lobbyTimeLeft);
+		} else if (timeLeft > 9) {
+			b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:" + timeLeft);
+		} else if (timeLeft >= 0){
+			b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:0" + timeLeft);
 		} else {
 			b.getObjective("Lobby").setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD+ "Lobby" + ChatColor.RED + " 0:00");
 		} 
@@ -133,8 +130,8 @@ public class SGScoreboards {
 	 * 
 	 * @param player: the player whose scoreboard to update
 	 */
-	public static void updatePreScoreboard(Player player) {
-		updateScoreboard(player, Main.preTimeLeft, "PreGame ");
+	public void updatePreScoreboard(Player player) {
+		updateScoreboard(player, Main.game.getTimeLeft(), "PreGame ");
 	}
 	
 	/**
@@ -142,8 +139,8 @@ public class SGScoreboards {
 	 * 
 	 * @param player: the player whose scoreboard to update
 	 */
-	public static void updateInGameScoreboard(Player player) {
-		updateScoreboard(player, Main.inGameTimeLeft, "LiveGame ");
+	public void updateInGameScoreboard(Player player) {
+		updateScoreboard(player, Main.game.getTimeLeft(), "LiveGame ");
 	}
 	
 	/**
@@ -151,8 +148,8 @@ public class SGScoreboards {
 	 * 
 	 * @param player: the player whose scoreboard to update
 	 */
-	public static void updatePreDMScoreboard(Player player) {
-		updateScoreboard(player, Main.preDMTimeLeft, "Pre-DM ");
+	public void updatePreDMScoreboard(Player player) {
+		updateScoreboard(player, Main.game.getTimeLeft(), "Pre-DM ");
 	}
 	
 	/**
@@ -160,8 +157,8 @@ public class SGScoreboards {
 	 * 
 	 * @param player: the player whose scoreboard to update
 	 */
-	public static void updateDMScoreboard(Player player) {
-		updateScoreboard(player, Main.DMTimeLeft, "Deathmatch ");
+	public void updateDMScoreboard(Player player) {
+		updateScoreboard(player, Main.game.getTimeLeft(), "Deathmatch ");
 	}
 	
 	/**
@@ -169,8 +166,8 @@ public class SGScoreboards {
 	 * 
 	 * @param player: the player whose scoreboard to update
 	 */
-	public static void updateCleanupScoreboard(Player player) {
-		updateScoreboard(player, Main.cleanupTimeLeft, "GameEnd ");
+	public void updateCleanupScoreboard(Player player) {
+		updateScoreboard(player, Main.game.getTimeLeft(), "GameEnd ");
 	}
 	
 	/**
@@ -180,7 +177,7 @@ public class SGScoreboards {
 	 * @param timeLeft: how much time is left in the Game State.
 	 * @param gameState: the current Game State.
 	 */
-	public static void updateScoreboard(Player player, int timeLeft, String gameState) {
+	public void updateScoreboard(Player player, int timeLeft, String gameState) {
 		Scoreboard b = player.getScoreboard();
 		b.getTeam("playing").setSuffix("" + ChatColor.GREEN + PlayersSpecs.players.size());
 		b.getTeam("watching").setSuffix("" + ChatColor.GREEN + PlayersSpecs.spectators.size());

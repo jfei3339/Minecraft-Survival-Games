@@ -18,8 +18,8 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Main;
-import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.StringFunctions;
 import me.Jon.SurvivalGames.ServerActions.LobbyActions;
@@ -31,7 +31,7 @@ public class InGameEvents implements Listener {
 	public void onQuit(PlayerQuitEvent event) {
 		event.setQuitMessage(null);
 		
-		if (Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH)) {
+		if (Main.game.gameState.equals(GameState.INGAME) || Main.game.gameState.equals(GameState.PREDM) || Main.game.gameState.equals(GameState.DEATHMATCH)) {
 			Player player = event.getPlayer();
 			if (PlayersSpecs.players.contains(player)) {
 				
@@ -66,7 +66,7 @@ public class InGameEvents implements Listener {
 			}
 		}
 		
-		if (Main.gameState.equals(GameState.CLEANUP)) {
+		if (Main.game.gameState.equals(GameState.CLEANUP)) {
 			Player player = event.getPlayer();
 			if (PlayersSpecs.players.contains(player)) {
 				PlayersSpecs.players.remove(player);
@@ -85,7 +85,7 @@ public class InGameEvents implements Listener {
 			event.setCancelled(true);
 		}
 		
-		if ((Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH) || Main.gameState.equals(GameState.CLEANUP)) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL) ){
+		if ((Main.game.gameState.equals(GameState.INGAME) || Main.game.gameState.equals(GameState.PREDM) || Main.game.gameState.equals(GameState.DEATHMATCH) || Main.game.gameState.equals(GameState.CLEANUP)) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL) ){
 		
 			
 			Material type = event.getBlock().getType();
@@ -118,7 +118,7 @@ public class InGameEvents implements Listener {
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
 		
-		if ((Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH) || Main.gameState.equals(GameState.CLEANUP)) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
+		if ((Main.game.gameState.equals(GameState.INGAME) || Main.game.gameState.equals(GameState.PREDM) || Main.game.gameState.equals(GameState.DEATHMATCH) || Main.game.gameState.equals(GameState.CLEANUP)) && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
 			if (event.getBlock().getType() == Material.FIRE) {
 				
 			} else {
@@ -185,7 +185,7 @@ public class InGameEvents implements Listener {
 		}
 
 		
-		if (Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH)) {
+		if (Main.game.gameState.equals(GameState.INGAME) || Main.game.gameState.equals(GameState.PREDM) || Main.game.gameState.equals(GameState.DEATHMATCH)) {
 			Bukkit.broadcastMessage(PlayersSpecs.nameColors.get(player) + player.getDisplayName() + ChatColor.GOLD + " has died.");
 			
 			//GET KILLER AND DO STUFF

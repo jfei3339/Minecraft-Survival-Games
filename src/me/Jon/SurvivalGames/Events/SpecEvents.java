@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Main;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.SGScoreboards;
@@ -21,21 +22,23 @@ import me.Jon.SurvivalGames.SGScoreboards;
  */
 public class SpecEvents implements Listener {
 	
+	private final SGScoreboards scoreboards = new SGScoreboards();
+	
 	//spectator join
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) { //don't let player join if in pregame
 		Player player = event.getPlayer();
 		
-		if (Main.gameState.equals("CLEANUP")) {
+		if (Main.game.gameState.equals(GameState.CLEANUP)) {
 			player.kickPlayer("You may not join, the server is restarting soon.");
 		}
 		
-		if (Main.gameState.equals("INGAME") || Main.gameState.equals("PREDM") || Main.gameState.equals("DEATHMATCH")) {
+		if (Main.game.gameState.equals(GameState.INGAME) || Main.game.gameState.equals(GameState.PREDM) || Main.game.gameState.equals(GameState.DEATHMATCH)) {
 			PlayersSpecs.spectators.add(player);
-			SGScoreboards.createScoreboard(player);	
+			scoreboards.createScoreboard(player);	
 			
-			Location loc = Bukkit.getWorld(Main.winningMap.toLowerCase()).getSpawnLocation();
+			Location loc = Bukkit.getWorld(Main.game.winningMap.toLowerCase()).getSpawnLocation();
 			
 			player.teleport(loc);
 			

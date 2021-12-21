@@ -6,7 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import me.Jon.SurvivalGames.Main.GameState;
+
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Data.MapSpawns;
 import me.Jon.SurvivalGames.Data.MapTier2;
 import net.md_5.bungee.api.ChatColor;
@@ -32,13 +33,13 @@ public class Celebration {
 
 			}
 			
-			Main.gameState = GameState.CLEANUP;
+			Main.game.gameState = GameState.CLEANUP;
 		}
 		
 		//fireworks
 		
 		int posNum = 1;
-		String map1 = Main.winningMap;
+		String map1 = Main.game.winningMap;
 		while (MapTier2.mapTier2Config.contains("Maps. " + map1 + "." + posNum)) {
 			posNum++;
 			

@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Main;
-import me.Jon.SurvivalGames.Main.GameState;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import net.md_5.bungee.api.ChatColor;
 
@@ -29,7 +29,7 @@ public class SQLevents implements Listener{
 	
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
-		if (Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH)) {
+		if (Main.game.gameState.equals(GameState.INGAME) || Main.game.gameState.equals(GameState.PREDM) || Main.game.gameState.equals(GameState.DEATHMATCH)) {
 			Player player = e.getEntity();
 			UUID uuid = player.getUniqueId();
 			Main.playerData.setStat(uuid, "LOSSES", Main.playerData.getStat(uuid, "LOSSES") + 1);

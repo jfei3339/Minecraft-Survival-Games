@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Main;
 import me.Jon.SurvivalGames.StringFunctions;
-import me.Jon.SurvivalGames.Main.GameState;
 import net.md_5.bungee.api.ChatColor;
 
 
@@ -61,7 +61,7 @@ public class VoteCommand implements Listener, CommandExecutor {
 			//VOTING
 			if (cmd.getName().equalsIgnoreCase(cmd1) || cmd.getName().equalsIgnoreCase(cmd2)) {
 				
-				if (!Main.gameState.equals(GameState.LOBBY)) {
+				if (!Main.game.gameState.equals(GameState.LOBBY)) {
 					player.sendMessage(prefix + ChatColor.GREEN + "Voting has ended.");
 					return true;
 				}

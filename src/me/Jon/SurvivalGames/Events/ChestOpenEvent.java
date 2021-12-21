@@ -9,11 +9,12 @@ import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import me.Jon.SurvivalGames.Game.GameState;
 import me.Jon.SurvivalGames.Main;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.Data.MapTier2;
 import me.Jon.SurvivalGames.Items.ChestTierManager;
-import me.Jon.SurvivalGames.Main.GameState;
 
 
 /*
@@ -54,7 +55,7 @@ public class ChestOpenEvent implements Listener {
 	@EventHandler
 	public void onChestOpen(PlayerInteractEvent e) {
 		
-		if (!Main.gameState.equals(GameState.LOBBY)){
+		if (!Main.game.gameState.equals(GameState.LOBBY)){
 			
 			if (e.hasBlock()) {
 				Block b = e.getClickedBlock();
