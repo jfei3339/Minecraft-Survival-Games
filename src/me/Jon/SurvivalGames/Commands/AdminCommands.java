@@ -25,7 +25,7 @@ public class AdminCommands implements Listener, CommandExecutor {
 			
 			if (sender instanceof Player && Main.connectedToPlayerDB == true) {
 				
-				String rank = Main.data.getRank(((Player) sender).getUniqueId());
+				String rank = Main.playerData.getRank(((Player) sender).getUniqueId());
 				if (rank.equals("ADMIN") || rank.equals("OWNER")) {
 					if (Main.gameState.equals(GameState.LOBBY)) {
 						Main.winningMap = Transition.determineWinningMap();

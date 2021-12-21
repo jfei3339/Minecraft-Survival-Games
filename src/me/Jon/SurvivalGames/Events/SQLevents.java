@@ -20,33 +20,9 @@ public class SQLevents implements Listener{
 		
 		if (e.getEntity().getKiller() instanceof Player) {
 			Player killer = (Player) e.getEntity().getKiller();
-			UUID uuid = killer.getUniqueId();
-
 			PlayersSpecs.playersXP.put(killer, PlayersSpecs.playersXP.get(killer) + 10);
 			PlayersSpecs.playersKills.put(killer, PlayersSpecs.playersKills.get(killer) + 1);
-
 			killer.sendMessage(ChatColor.LIGHT_PURPLE + "+10 XP (kill)");
-			
-			/*
-			int newLevel = getLevel(killer);
-			
-			if (newLevel > currLevel) {
-				killer.sendMessage(ChatColor.AQUA + "Congratulations! You are now level " + newLevel + "!");
-			}
-			*/
-			
-			//Main.data.setStat(killer.getUniqueId(), "LEVEL", newLevel);
-			
-			/*
-			double kills = Main.data.getStat(uuid, "KILLS");
-			double deaths = Main.data.getStat(uuid, "LOSSES");
-			
-			if (deaths == 0) {
-				deaths = 1;
-			}
-			*/
-			
-			//Main.data.setStat(uuid, "KDR", kills/deaths);
 		}
 		
 	} 
@@ -56,16 +32,16 @@ public class SQLevents implements Listener{
 		if (Main.gameState.equals(GameState.INGAME) || Main.gameState.equals(GameState.PREDM) || Main.gameState.equals(GameState.DEATHMATCH)) {
 			Player player = e.getEntity();
 			UUID uuid = player.getUniqueId();
-			Main.data.setStat(uuid, "LOSSES", Main.data.getStat(uuid, "LOSSES") + 1);
+			Main.playerData.setStat(uuid, "LOSSES", Main.playerData.getStat(uuid, "LOSSES") + 1);
 			
-			double kills = Main.data.getStat(uuid, "KILLS");
-			double deaths = Main.data.getStat(uuid, "LOSSES");
+			double kills = Main.playerData.getStat(uuid, "KILLS");
+			double deaths = Main.playerData.getStat(uuid, "LOSSES");
 			
 			if (deaths == 0) {
 				deaths = 1;
 			}
 			
-			Main.data.setStat(uuid, "KDR", kills/deaths);
+			Main.playerData.setStat(uuid, "KDR", kills/deaths);
 		}
 	}
 	
@@ -73,7 +49,7 @@ public class SQLevents implements Listener{
 	public static int[] getProgress(Player p) {
 		UUID uuid = p.getUniqueId();
 		
-		int xp = Main.data.getStat(uuid, "XP");
+		int xp = Main.playerData.getStat(uuid, "XP");
 		
 		int level = 1;
 

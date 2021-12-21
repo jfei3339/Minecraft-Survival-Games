@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 
 import me.Jon.SurvivalGames.Main;
 import me.Jon.SurvivalGames.StringFunctions;
-import me.Jon.SurvivalGames.Data.ServerInfo;
 import me.Jon.SurvivalGames.Main.GameState;
 import net.md_5.bungee.api.ChatColor;
 
@@ -90,7 +89,7 @@ public class VoteCommand implements Listener, CommandExecutor {
 				
 				if (Main.connectedToPlayerDB == true) {
 					
-					String rank = Main.data.getRank(player.getUniqueId());
+					String rank = Main.playerData.getRank(player.getUniqueId());
 					if (rank.equals("DIAMOND")) {
 						numVotes = 4;
 					} else if (rank.equals("GOLD")) {

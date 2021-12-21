@@ -1,7 +1,5 @@
 package me.Jon.SurvivalGames.Commands;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -101,7 +99,7 @@ public class InGameCommands implements Listener, CommandExecutor {
 						//get sender's stats
 						UUID uuid = player.getUniqueId();
 						
-						int[] stats = Main.data.getAllStats(uuid);
+						int[] stats = Main.playerData.getAllStats(uuid);
 						
 						double K = (double) stats[3];
 						double D = (double) stats[2];
@@ -119,15 +117,16 @@ public class InGameCommands implements Listener, CommandExecutor {
 						player.sendMessage(ChatColor.DARK_GREEN + "Chests Opened: " + StringFunctions.surround(String.valueOf(stats[4]), ChatColor.YELLOW + ""));
 						
 					} else {
+						@SuppressWarnings("deprecation")
 						UUID uuid = Bukkit.getOfflinePlayer(args[0]).getUniqueId();
 						
-						if (Main.data.exists(uuid, "playerdata")) {
+						if (Main.playerData.exists(uuid, "playerdata")) {
 							
-							String name = Main.data.getName(uuid);
+							String name = Main.playerData.getName(uuid);
 							//String rank = Main.data.getRank(uuid);
 
 							//level wins losses kills chests
-							int[] stats = Main.data.getAllStats(uuid);
+							int[] stats = Main.playerData.getAllStats(uuid);
 							
 							double K = (double) stats[3];
 							double D = (double) stats[2];
@@ -167,7 +166,7 @@ public class InGameCommands implements Listener, CommandExecutor {
 			if (cmd.getName().equalsIgnoreCase(cmd8) || cmd.getName().equalsIgnoreCase(cmd9)) {
 				UUID uuid = player.getUniqueId();
 				
-				int xp = Main.data.getStat(uuid, "XP");
+				int xp = Main.playerData.getStat(uuid, "XP");
 				int[] progress = SQLevents.getProgress(player);
 				player.sendMessage(ChatColor.DARK_GREEN + "Your Leveling Progress");
 				player.sendMessage(ChatColor.WHITE + "Total XP earned: " + ChatColor.GOLD + xp);

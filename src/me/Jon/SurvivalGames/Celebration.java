@@ -26,9 +26,9 @@ public class Celebration {
 			Bukkit.broadcastMessage(Main.prefix + PlayersSpecs.nameColors.get(p) + p.getDisplayName() + ChatColor.GREEN + " has won the Survival Games!");
 			
 			if (Main.connectedToPlayerDB == true) {
-				Main.data.setStat(p.getUniqueId(), "WINS", Main.data.getStat(p.getUniqueId(), "WINS") + 1);
+				Main.playerData.setStat(p.getUniqueId(), "WINS", Main.playerData.getStat(p.getUniqueId(), "WINS") + 1);
 				p.sendMessage(ChatColor.LIGHT_PURPLE + "+200 XP (win)");
-				Main.data.setStat(p.getUniqueId(), "XP", Main.data.getStat(p.getUniqueId(), "XP") + 200);
+				Main.playerData.setStat(p.getUniqueId(), "XP", Main.playerData.getStat(p.getUniqueId(), "XP") + 200);
 
 			}
 			
@@ -60,7 +60,7 @@ public class Celebration {
 	 */
 	public static int getLevel(Player player) {
 		UUID uuid = player.getUniqueId();
-		int xp = Main.data.getStat(uuid, "XP");
+		int xp = Main.playerData.getStat(uuid, "XP");
 		int level = 1;
 		if (xp < 200) {
 			level = 1;

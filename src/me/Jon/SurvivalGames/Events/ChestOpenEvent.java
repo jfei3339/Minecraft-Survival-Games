@@ -1,26 +1,19 @@
 package me.Jon.SurvivalGames.Events;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import me.Jon.SurvivalGames.Main;
 import me.Jon.SurvivalGames.PlayersSpecs;
 import me.Jon.SurvivalGames.Data.MapTier2;
 import me.Jon.SurvivalGames.Items.ChestTierManager;
 import me.Jon.SurvivalGames.Main.GameState;
-import net.md_5.bungee.api.ChatColor;
 
 
 /*

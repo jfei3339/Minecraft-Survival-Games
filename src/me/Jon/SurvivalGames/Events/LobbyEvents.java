@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitScheduler;
 import me.Jon.SurvivalGames.SGScoreboards;
 import me.Jon.SurvivalGames.ServerActions.LobbyActions;
 import me.Jon.SurvivalGames.Main;
@@ -30,7 +29,7 @@ public class LobbyEvents implements Listener{
 		
 		if (Bukkit.getServer().getMaxPlayers() <= PlayersSpecs.players.size()) {
 			Player p = e.getPlayer();
-			String rank = Main.data.getRank(p.getUniqueId());
+			String rank = Main.playerData.getRank(p.getUniqueId());
 			
 			if (!rank.equals("NONE")) {
 				for (Player player: PlayersSpecs.players) {
@@ -53,13 +52,13 @@ public class LobbyEvents implements Listener{
 		
 		if (Main.connectedToPlayerDB == true && Main.gameState != GameState.CLEANUP) {
 			
-			Main.data.dataCreatePlayer(p);
-			Main.data.infoCreatePlayer(p);
+			Main.playerData.dataCreatePlayer(p);
+			Main.playerData.infoCreatePlayer(p);
 			PlayersSpecs.playersXP.put(p, 0);
 			PlayersSpecs.playersKills.put(p, 0);
 			PlayersSpecs.playersChests.put(p, 0);
 			
-			String rank = Main.data.getRank(p.getUniqueId());
+			String rank = Main.playerData.getRank(p.getUniqueId());
 			
 			if (rank.equals("OWNER")) {
 				PlayersSpecs.nameColors.put(p, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD);

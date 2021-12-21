@@ -99,10 +99,10 @@ public class Main extends JavaPlugin implements Listener{
 	private ServerInfo si;
 	
 	public MySQL SQL;
-	public static SQLGetter data;
+	public static SQLGetter playerData;
 	
 	public MySQL_status SQL_status;
-	public static SQLGetter_status statusdata;
+	public static SQLGetter_status statusData;
 	public static boolean connectedToPlayerDB = false;
 	public static boolean connectedToStatusDB = false;
 	public int count = 0;
@@ -137,10 +137,10 @@ public class Main extends JavaPlugin implements Listener{
 		}
 		
 		this.SQL = new MySQL();
-		data = new SQLGetter(this);
+		playerData = new SQLGetter(this);
 		
 		this.SQL_status = new MySQL_status();
-		statusdata = new SQLGetter_status(this);
+		statusData = new SQLGetter_status(this);
 		
 		try {
 			SQL.connect();
@@ -157,15 +157,15 @@ public class Main extends JavaPlugin implements Listener{
 		if (SQL.isConnected()) {
 			connectedToPlayerDB = true;
 			Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "\n\n\n Database IS connected to player database\n\n\n");
-			data.createDataTable(); //create tables if it don't exist
-			data.createInfoTable();
+			playerData.createDataTable(); //create tables if it don't exist
+			playerData.createInfoTable();
 			getServer().getPluginManager().registerEvents(new SQLevents(), this); //register SQL events
 		}
 		
 		if (SQL_status.isConnected()) {
 			connectedToStatusDB = true;
 			Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "\n\n\n Database IS connected to status database\n\n\n");
-			statusdata.createStatusTable(); //create table if it doesn't exist
+			statusData.createStatusTable(); //create table if it doesn't exist
 		}
 		
 		//Console will say plugin has been enabled
@@ -233,7 +233,7 @@ public class Main extends JavaPlugin implements Listener{
 		gameState = GameState.RESTARTING;
 		
 		if (connectedToStatusDB) {
-			statusdata.setStat(serverName, "STATUS", "RESTARTING");
+			statusData.setStat(serverName, "STATUS", "RESTARTING");
 		}
 		
 		if (winningMap != null) {
@@ -278,7 +278,7 @@ public class Main extends JavaPlugin implements Listener{
 	            	//dummy to make sure no database timeout
 	            	if (count == 0) {
 	            		if (Main.connectedToPlayerDB == true) {
-	            			data.dummy();
+	            			playerData.dummy();
 	            		}
 	            	}
 
@@ -286,7 +286,7 @@ public class Main extends JavaPlugin implements Listener{
 	            	if (count == 60) {
 	            		count = 0;
 	            		if (Main.connectedToPlayerDB == true) {
-	            			data.dummy();
+	            			playerData.dummy();
 	            		}
 	            		
 	            		if (Main.gameState.equals(GameState.INGAME)) {
@@ -323,7 +323,7 @@ public class Main extends JavaPlugin implements Listener{
 								
 								//Declare map winner, teleport players to map.
 								winningMap = Transition.determineWinningMap();
-								ChestOpenEvent.getTier2Locations(winningMap); //winningMap.toLowerCase();
+								ChestOpenEvent.getTier2Locations(winningMap);
 								
 								Bukkit.broadcastMessage(prefix + ChatColor.YELLOW + winningMap + ChatColor.GREEN +  " will be played!");
 								countdownResetFlag = false;
@@ -332,7 +332,6 @@ public class Main extends JavaPlugin implements Listener{
 
 								//distance for lightning strikes in DM
 								DMDistance = 1.3*Transition.DMLightningDist(winningMap);
-								
 								gameState = GameState.PREGAME;
 								
 								//new scoreboard
@@ -520,15 +519,15 @@ public class Main extends JavaPlugin implements Listener{
 									UUID uuid = p.getUniqueId();
 
 									
-									data.setStat(uuid, "XP", data.getStat(uuid, "XP") + PlayersSpecs.playersXP.get(p));
-									data.setStat(uuid, "KILLS", data.getStat(uuid, "KILLS") + PlayersSpecs.playersKills.get(p));
-									data.setStat(uuid, "CHESTS", data.getStat(uuid, "CHESTS") + PlayersSpecs.playersChests.get(p));
+									playerData.setStat(uuid, "XP", playerData.getStat(uuid, "XP") + PlayersSpecs.playersXP.get(p));
+									playerData.setStat(uuid, "KILLS", playerData.getStat(uuid, "KILLS") + PlayersSpecs.playersKills.get(p));
+									playerData.setStat(uuid, "CHESTS", playerData.getStat(uuid, "CHESTS") + PlayersSpecs.playersChests.get(p));
 									
 									Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "\nPLAYER STATS UPDATED!\n");
 									
 									int newLevel = SQLevents.getProgress(p)[0];
 									
-									data.setStat(uuid, "LEVEL", newLevel);
+									playerData.setStat(uuid, "LEVEL", newLevel);
 									
 									
 																		
