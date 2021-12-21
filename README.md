@@ -25,5 +25,7 @@ If a player wins, the game ends and there is a celebration with fireworks. If ti
 The server has a custom leveling system based on player experience. Killing a player gives one 10 experience points and winning a game gives one 200 experience points. Player statistics such as experience points, wins, kills, deaths, kill/death ratio, etc. are stored in a MySQL database.
 
 A player can use the command "/stats" to check these stored statistics. The command "/stats <playername>" can be used to view the stats of another player.
+  
+Information such as the game state, the number of players remaining, player name, and time left is shown on a player scoreboard.
 
 ## Demo Video
