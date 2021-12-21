@@ -258,7 +258,7 @@ public class Main extends JavaPlugin implements Listener{
 	}
 	
 	public static int taskID;
-	public static boolean flag = true;
+	public static boolean countdownResetFlag = true;
 	public static boolean DMcountdown = false;
 	public static String winningMap;
 	public static double DMDistance;
@@ -314,7 +314,7 @@ public class Main extends JavaPlugin implements Listener{
 					
 					//LOBBY
 					if (gameState.equals(GameState.LOBBY)) {
-						if (Bukkit.getOnlinePlayers().size() >= minPlayers && flag == true) {
+						if (Bukkit.getOnlinePlayers().size() >= minPlayers && countdownResetFlag == true) {
 							
 							lobbyTimeLeft -= 1;
 							
@@ -326,7 +326,7 @@ public class Main extends JavaPlugin implements Listener{
 								ChestOpenEvent.getTier2Locations(winningMap); //winningMap.toLowerCase();
 								
 								Bukkit.broadcastMessage(prefix + ChatColor.YELLOW + winningMap + ChatColor.GREEN +  " will be played!");
-								flag = false;
+								countdownResetFlag = false;
 								Transition.teleportPlayers(winningMap);
 								Bukkit.getWorld(winningMap).setTime(0);
 
@@ -348,7 +348,7 @@ public class Main extends JavaPlugin implements Listener{
 						}
 						
 						if (Bukkit.getOnlinePlayers().size() < minPlayers) {
-							flag = true;
+							countdownResetFlag = true;
 							lobbyTimeLeft = lobbyMinTime;						
 						}
 					}
@@ -372,9 +372,8 @@ public class Main extends JavaPlugin implements Listener{
 						
 						//did someone win?
 						if (PlayersSpecs.players.size() == 1) {
-							Celebration.celebrate();				
+							Celebration.celebrate();
 						} else if (PlayersSpecs.players.size() == 0) {
-							
 							gameState = GameState.CLEANUP;
 						}
 					}
@@ -459,7 +458,6 @@ public class Main extends JavaPlugin implements Listener{
 							if (DMTimeLeft % 3 == 0) {
 								Location loc = p.getLocation();
 								int x = loc.getBlockX();
-								//int y = loc.getBlockY();
 								int z = loc.getBlockZ();
 								
 								if (Math.sqrt((x-xCenter)*(x-xCenter) + (z-zCenter)*(z-zCenter)) > DMDistance) {

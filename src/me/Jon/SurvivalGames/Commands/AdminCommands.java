@@ -20,7 +20,6 @@ public class AdminCommands implements Listener, CommandExecutor {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		// TODO Auto-generated method stub
 		
 		if (cmd.getName().equalsIgnoreCase(cmd1)) {
 			
@@ -33,7 +32,7 @@ public class AdminCommands implements Listener, CommandExecutor {
 						ChestOpenEvent.getTier2Locations(Main.winningMap.toLowerCase());
 						
 						Bukkit.broadcastMessage(Main.prefix + ChatColor.YELLOW + Main.winningMap + ChatColor.GREEN +  " will be played!");
-						Main.flag = false;
+						Main.countdownResetFlag = false;
 						Transition.teleportPlayers(Main.winningMap);
 						
 						Bukkit.getWorld(Main.winningMap).setTime(100);
@@ -41,7 +40,7 @@ public class AdminCommands implements Listener, CommandExecutor {
 						//distance for lightning strikes in DM
 						Main.DMDistance = 1.25*Transition.DMLightningDist(Main.winningMap);
 						
-						Main.gameState = GameState.CLEANUP;
+						Main.gameState = GameState.PREGAME;
 						
 						
 						//new scoreboard
