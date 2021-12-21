@@ -75,7 +75,7 @@ public class Main extends JavaPlugin implements Listener{
 		//get map locations
 		loadData();
 		
-		//get rid of playerdata, remove weird bugs
+		//get rid of internal Minecraft data, removes weird bugs inherent to this version of Minecraft and not this server.
 		File playerFilesDir = new File("lobby/playerdata");
 		if(playerFilesDir.isDirectory()){
 			String[] playerDats = playerFilesDir.list();
@@ -175,7 +175,7 @@ public class Main extends JavaPlugin implements Listener{
 	}
 	
 	/**
-	 * Resets certain player data.
+	 * Resets certain offline player data.
 	 */
 	public void onDisable() {
 		
@@ -189,7 +189,6 @@ public class Main extends JavaPlugin implements Listener{
 		
 		Bukkit.broadcastMessage(prefix + ChatColor.LIGHT_PURPLE + "Trying to delete player data");
 
-		
 		File playerFilesDir = new File("lobby/playerdata");
 		if(playerFilesDir.isDirectory()){
 			String[] playerDats = playerFilesDir.list();
