@@ -33,6 +33,6 @@ A list of players and spectators can be seen using the "/list" command.
 
 ## Demo Video
   
-Here is example gameplay footage. The server/database were both running on my local machine, so the player stats are pretty much blank.
+Here is example gameplay footage (click the image below to see the Youtube video). The server/database were both running on my local machine, so the player stats are pretty much blank.
 
 [![SURVIVAL GAMES DEMO](http://img.youtube.com/vi/XVueaDvkujM/0.jpg)](http://www.youtube.com/watch?v=XVueaDvkujM "Survival Games DEMO")
