@@ -35,7 +35,7 @@ import me.Jon.SurvivalGames.Data.ServerInfo;
 import net.md_5.bungee.api.ChatColor;
 
 /*
- * Main class that controls the game.
+ * Main class that determines what happens when the server is enabled/disabled.
  */
 public class Main extends JavaPlugin implements Listener{
 	
