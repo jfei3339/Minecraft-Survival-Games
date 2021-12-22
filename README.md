@@ -7,7 +7,7 @@ by MCGamer.net's version of Survival Games, but the code is my own.
 ## Gameplay Description
 
 When the server is first started, any players who join are teleported to the lobby. Here, players can vote for which maps they want to play. 
-Maps available by issuing the command "/vote". To vote for a map, players type "/vote #", where '#' is the number of the map.
+Maps available by issuing the command "/vote" (or "/v"). To vote for a map, players type "/vote #" (or "/v #"), where '#' is the number of the map.
 
 A minimum of 6 players is needed to start the game. The maximum number of players allowed is 24 (as in the Hunger Games, where there are 24 tributes/participants). There is a countdown clock so that everytime has a chance to vote for a map.
 
@@ -27,5 +27,12 @@ The server has a custom leveling system based on player experience. Killing a pl
 A player can use the command "/stats" to check these stored statistics. The command "/stats <playername>" can be used to view the stats of another player.
   
 Information such as the game state, the number of players remaining, player name, and time left is shown on a player scoreboard.
+  
+Players who join during the middle of a game become invisible spectators who cannot interact with the players still alive. 
+A list of players and spectators can be seen using the "/list" command.
 
 ## Demo Video
+  
+Here is example gameplay footage (click the image below to see the Youtube video). The server/database were both running on my local machine, so the player stats are pretty much blank.
+
+[![SURVIVAL GAMES DEMO](http://img.youtube.com/vi/XVueaDvkujM/0.jpg)](http://www.youtube.com/watch?v=XVueaDvkujM "Survival Games DEMO")
